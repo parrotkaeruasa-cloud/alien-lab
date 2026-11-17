@@ -310,15 +310,16 @@ function makePart(name,pos,r,scale,color,shape='sphere',mass=1){
 
 // パーツ同士を接続
 function link(a,b,pa,pb){
-  const c=new CANNON.PointToPointConstraint(
-    a.body,
-    b.body,
-    new CANNON.Vec3(...pa),
-    new CANNON.Vec3(...pb),
-    1e6
-  );
-  world.addConstraint(c);
-  joints.push({a,b,c});
+    const c = new CANNON.PointToPointConstraint(
+        a.body,
+        new CANNON.Vec3(...pa),
+        b.body,
+        new CANNON.Vec3(...pb),
+        1e6
+    );
+
+    world.addConstraint(c);
+    joints.push({a,b,c});
 }
 
 // エイリアン生成
