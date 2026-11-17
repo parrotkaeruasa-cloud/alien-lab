@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>ALIEN LAB — Physics Sandbox</title>
+<style>
+:root{--ink:#17212b;--muted:#71808e;--line:#dce5eb;--blue:#1c9cc5;--cyan:#62d7e9;--panel:rgba(255,255,255,.91)}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#edf3f6;font-family:Inter,"Noto Sans JP",system-ui,sans-serif;color:var(--ink)}
+#scene{position:fixed;inset:0;display:block}#top{position:fixed;left:18px;top:16px;z-index:3;display:flex;align-items:center;gap:12px;pointer-events:none}.logo{font-weight:900;letter-spacing:.13em;font-size:15px}.sub{font-size:10px;letter-spacing:.18em;color:#71818d;margin-top:3px}.dot{width:10px;height:10px;border-radius:50%;background:#47d4b1;box-shadow:0 0 14px #47d4b1}
+.panel{position:fixed;z-index:3;background:var(--panel);border:1px solid rgba(190,207,218,.8);box-shadow:0 12px 40px rgba(31,57,74,.10);backdrop-filter:blur(14px);border-radius:16px}.left{left:18px;top:82px;width:190px;padding:13px}.right{right:18px;top:18px;width:190px;padding:14px}.panel-title{font-size:10px;font-weight:900;letter-spacing:.16em;color:#71808e;margin:0 0 10px}.tool{width:100%;display:flex;align-items:center;gap:10px;border:1px solid transparent;background:transparent;padding:9px 10px;border-radius:10px;text-align:left;color:#344451;font-weight:700;font-size:12px;cursor:pointer;margin:3px 0}.tool:hover{background:#f0f7fa}.tool.active{background:#e4f7fb;border-color:#9ddce8;color:#087fa4}.ico{width:25px;height:25px;border-radius:8px;background:#eaf1f5;display:grid;place-items:center;font-size:15px}.tool.active .ico{background:#c9eff6}.hint{font-size:10px;color:#82909a;line-height:1.6;margin:10px 3px 1px}.stat{display:flex;justify-content:space-between;align-items:center;font-size:11px;margin:9px 0;color:#657582}.stat b{color:#263844;font-size:11px}.pill{font-size:9px;letter-spacing:.12em;color:#1686a6;background:#e5f7fb;padding:5px 8px;border-radius:99px;font-weight:900}.actions{display:flex;gap:7px;margin-top:12px}.action{flex:1;border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 5px;font-size:10px;font-weight:800;color:#40515d;cursor:pointer}.action.primary{background:#172d3b;color:#fff;border-color:#172d3b}.action:hover{filter:brightness(.97)}#bottom{position:fixed;z-index:3;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.88);border:1px solid #dce5eb;border-radius:99px;padding:9px 15px;box-shadow:0 8px 30px rgba(31,57,74,.10);font-size:10px;color:#71808e;white-space:nowrap}.key{padding:3px 6px;border:1px solid #d5e0e6;border-radius:5px;background:#fff;color:#44545f;font-weight:800}#toast{position:fixed;z-index:5;left:50%;top:78px;transform:translate(-50%,-8px);opacity:0;transition:.2s;background:#172d3b;color:#fff;padding:9px 14px;border-radius:99px;font-size:11px;pointer-events:none}#toast.show{opacity:1;transform:translate(-50%,0)}#loading{position:fixed;inset:0;z-index:10;display:grid;place-items:center;background:#eef4f7;color:#243845;font-size:13px;letter-spacing:.12em}#loading small{display:block;color:#82909a;margin-top:8px;text-align:center;font-size:10px;letter-spacing:0}#crosshair{position:fixed;z-index:2;left:50%;top:50%;width:10px;height:10px;border:1px solid rgba(28,156,197,.45);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;opacity:.5}
+@media(max-width:650px){.left{left:10px;top:auto;bottom:72px;width:156px;padding:9px}.right{right:10px;top:10px;width:150px;padding:10px}.tool{padding:7px;font-size:11px}.hint{display:none}#top{left:12px;top:10px}.logo{font-size:12px}#bottom{bottom:10px;font-size:9px}.stat{margin:6px 0}}
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+<div id="loading">ALIEN LAB <small>3D LABORATORY を準備中...</small></div>
+<div id="top"><span class="dot"></span><div><div class="logo">ALIEN LAB</div><div class="sub">PHYSICS SANDBOX</div></div></div>
+<div class="panel left"><div class="panel-title">TOOLS / 道具</div>
+<button class="tool active" data-tool="grab"><span class="ico">✋</span>つかむ・動かす</button>
+<button class="tool" data-tool="pulse"><span class="ico">✦</span>エネルギーパルス</button>
+<button class="tool" data-tool="detach"><span class="ico">⟡</span>パーツ分離</button>
+<button class="tool" data-tool="scan"><span class="ico">⌖</span>スキャン</button>
+<button class="tool" data-tool="gravity"><span class="ico">◉</span>低重力切替</button>
+<div class="hint">エイリアンをクリックして道具を使用。<br>ドラッグでつかんで移動できます。</div></div>
+<div class="panel right"><div class="panel-title">SPECIMEN STATUS</div><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:13px">SPECIMEN 01</b><span class="pill">STABLE</span></div>
+<div class="stat"><span>状態</span><b id="status">待機中</b></div><div class="stat"><span>接続パーツ</span><b id="parts">9 / 9</b></div><div class="stat"><span>重力</span><b id="grav">標準</b></div>
+<div class="actions"><button class="action" id="newAlien">再生成</button><button class="action primary" id="reset">リセット</button></div></div>
+<div id="bottom"><span><span class="key">左クリック</span> 道具を使う</span><span><span class="key">ドラッグ</span> 視点回転</span><span><span class="key">ホイール</span> ズーム</span></div>
+<div id="toast"></div><div id="crosshair"></div>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+import * as CANNON from 'https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js';
+const canvas=document.querySelector('#scene');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
+const scene=new THREE.Scene();scene.background=new THREE.Color(0xeaf1f4);scene.fog=new THREE.Fog(0xeaf1f4,17,34);
+const camera=new THREE.PerspectiveCamera(43,innerWidth/innerHeight,.1,100);camera.position.set(5.2,4.3,8.5);
+const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,1.35,0);controls.enableDamping=true;controls.minDistance=4;controls.maxDistance=15;controls.maxPolarAngle=Math.PI*.48;
+scene.add(new THREE.HemisphereLight(0xffffff,0xb4c6d0,2.1));const key=new THREE.DirectionalLight(0xffffff,3.1);key.position.set(4,8,5);key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.camera.left=-8;key.shadow.camera.right=8;key.shadow.camera.top=8;key.shadow.camera.bottom=-8;scene.add(key);
+for(const [x,z] of [[-5,-4],[5,-4],[-5,4],[5,4]]){const l=new THREE.PointLight(0x9deafa,22,10);l.position.set(x,3.7,z);scene.add(l)}
+const world=new CANNON.World({gravity:new CANNON.Vec3(0,-9.82,0)});world.broadphase=new CANNON.SAPBroadphase(world);world.allowSleep=true;world.solver.iterations=12;world.defaultContactMaterial.friction=.55;world.defaultContactMaterial.restitution=.08;
+const mat=new CANNON.Material('specimen');const floorMat=new CANNON.Material('floor');world.addContactMaterial(new CANNON.ContactMaterial(mat,floorMat,{friction:.65,restitution:.05}));
+const meshes=[];let parts=[],joints=[],tool='grab',lowGravity=false,dragBody=null,dragPlane=new THREE.Plane(),dragPoint=new THREE.Vector3(),dragOffset=new THREE.Vector3();const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();
+function box(w,h,d,color,rough=.7,metal=0){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal}));m.castShadow=true;m.receiveShadow=true;return m}
+// Lab floor and clean modular walls
+const floor=box(18,.25,18,0xfafcfd);floor.position.y=-.16;scene.add(floor);const floorBody=new CANNON.Body({mass:0,material:floorMat,shape:new CANNON.Box(new CANNON.Vec3(9,.125,9)),position:new CANNON.Vec3(0,-.16,0)});world.addBody(floorBody);
+const grid=new THREE.GridHelper(18,36,0xc8d7df,0xdce6eb);grid.position.y=-.028;scene.add(grid);
+for(const [x,z,ry] of [[0,-8.9,0],[-8.9,0,Math.PI/2],[8.9,0,Math.PI/2]]){const wall=box(18,.12,3,0xffffff);wall.position.set(x,3.5,z);wall.rotation.y=ry;scene.add(wall)}
+// light panels and equipment
+for(let i=-1;i<=1;i++){const panel=box(2.5,.08,1.2,0xffffff,.25);panel.position.set(i*4,5.1,-1);scene.add(panel);const glow=new THREE.Mesh(new THREE.PlaneGeometry(2.3,1),new THREE.MeshBasicMaterial({color:0xffffff}));glow.rotation.x=Math.PI/2;glow.position.set(i*4,5.045,-1);scene.add(glow)}
+const table=box(3.5,.22,2.2,0xdce7eb,.32,.15);table.position.set(0,.85,0);scene.add(table);for(const x of [-1.45,1.45])for(const z of [-.82,.82]){const leg=box(.13,.85,.13,0xaabac3,.35,.45);leg.position.set(x,.35,z);scene.add(leg)}
+const console=box(1.25,.85,.55,0xd7e4e9,.35,.2);console.position.set(-3,.43,-2.4);scene.add(console);const screen=new THREE.Mesh(new THREE.PlaneGeometry(.92,.48),new THREE.MeshBasicMaterial({color:0x75d7e8}));screen.position.set(-3,.65,-2.115);scene.add(screen);
+function makePart(name,pos,r,scale,color,shape='sphere',mass=1){const body=new CANNON.Body({mass,material:mat,linearDamping:.35,angularDamping:.55,allowSleep:true,sleepSpeedLimit:.12,sleepTimeLimit:1});let sh;if(shape==='box')sh=new CANNON.Box(new CANNON.Vec3(r[0],r[1],r[2]));else sh=new CANNON.Sphere(r);body.addShape(sh);body.position.set(...pos);world.addBody(body);const geo=shape==='box'?new THREE.BoxGeometry(scale[0],scale[1],scale[2]):new THREE.SphereGeometry(1,32,24);const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color,roughness:.32,metalness:.08}));mesh.scale.set(...scale);mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);const p={name,body,mesh,connected:true};parts.push(p);meshes.push(p);return p}
+function link(a,b,pa,pb){const c=new CANNON.PointToPointConstraint(a.body,b.body,new CANNON.Vec3(...pa),new CANNON.Vec3(...pb),1e6);world.addConstraint(c);joints.push({a,b,c})}
+function createAlien(){clearAlien();const skin=0x75b9a7,dark=0x244b4c,belly=0xa8d7c7;
+const torso=makePart('胴体',[0,2.0,0],[.34,.5,.25],[.78,1.12,.55],skin,'box',3);const head=makePart('頭',[0,2.92,0],.42,[.84,.82,.78],skin,'sphere',1.2);link(torso,head,[0,.55,0],[0,-.35,0]);
+const pelvis=makePart('腰',[0,1.25,0],[.3,.24,.23],[.62,.42,.48],belly,'box',1.8);link(torso,pelvis,[0,-.55,0],[0,.2,0]);
+const armL=makePart('左腕',[-.62,2.12,0],.2,[.27,.78,.27],skin,'sphere',.7);const armR=makePart('右腕',[.62,2.12,0],.2,[.27,.78,.27],skin,'sphere',.7);link(torso,armL,[-.38,.32,0],[0,.34,0]);link(torso,armR,[.38,.32,0],[0,.34,0]);
+const handL=makePart('左手',[-.65,1.65,0],.16,[.3,.3,.3],belly,'sphere',.35);const handR=makePart('右手',[.65,1.65,0],.16,[.3,.3,.3],belly,'sphere',.35);link(armL,handL,[0,-.36,0],[0,.12,0]);link(armR,handR,[0,-.36,0],[0,.12,0]);
+const legL=makePart('左脚',[-.22,.68,0],.22,[.32,.85,.34],skin,'sphere',1);const legR=makePart('右脚',[.22,.68,0],.22,[.32,.85,.34],skin,'sphere',1);link(pelvis,legL,[-.18,-.12,0],[0,.38,0]);link(pelvis,legR,[.18,-.12,0],[0,.38,0]);
+// Eyes and belly markings follow the head/torso without adding physical hitboxes
+for(const side of [-1,1]){const eye=new THREE.Mesh(new THREE.SphereGeometry(.115,24,18),new THREE.MeshStandardMaterial({color:0x101d2a,roughness:.12,metalness:.25}));eye.position.set(side*.19,3.0,.335);eye.scale.set(1,1.35,.5);scene.add(eye);head.mesh.add(eye);eye.position.set(side*.23,.06,.39)}
+const bellyMesh=new THREE.Mesh(new THREE.SphereGeometry(1,24,18),new THREE.MeshStandardMaterial({color:0xc8eee0,roughness:.45}));bellyMesh.scale.set(.24,.42,.035);bellyMesh.position.set(0,2.0,.29);torso.mesh.add(bellyMesh);
+for(const p of parts){p.body.velocity.set(0,0,0);p.body.angularVelocity.set(0,0,0)}updateStatus();toast('SPECIMEN 01 を配置しました')}
+function clearAlien(){for(const j of joints)world.removeConstraint(j.c);joints=[];for(const p of parts){world.removeBody(p.body);scene.remove(p.mesh)}parts=[];}
+function updateStatus(){document.querySelector('#parts').textContent=parts.filter(p=>p.connected).length+' / '+parts.length}
+function toast(t){const el=document.querySelector('#toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),1500)}
+function setTool(t){tool=t;document.querySelectorAll('.tool').forEach(b=>b.classList.toggle('active',b.dataset.tool===t));document.querySelector('#status').textContent=({grab:'操作待機',pulse:'パルス選択中',detach:'分離モード',scan:'スキャン待機',gravity:'低重力モード'})[t]||'待機中'}
+document.querySelectorAll('.tool').forEach(b=>b.addEventListener('click',()=>{const t=b.dataset.tool;if(t==='gravity'){lowGravity=!lowGravity;world.gravity.set(0,lowGravity?-2.2:-9.82,0);document.querySelector('#grav').textContent=lowGravity?'低重力':'標準';toast(lowGravity?'低重力 ON':'標準重力に戻しました');setTool('grab')}else setTool(t)}));
+function getHit(e){const r=renderer.domElement.getBoundingClientRect();mouse.x=(e.clientX-r.left)/r.width*2-1;mouse.y=-(e.clientY-r.top)/r.height*2+1;raycaster.setFromCamera(mouse,camera);const hits=raycaster.intersectObjects(parts.map(p=>p.mesh),false);return hits.length?parts.find(p=>p.mesh===hits[0].object):null}
+function onDown(e){if(e.button!==0)return;const p=getHit(e);if(!p)return;if(tool==='pulse'){const dir=new THREE.Vector3();camera.getWorldDirection(dir);p.body.applyImpulse(new CANNON.Vec3(dir.x*5,dir.y*5+2,dir.z*5),p.body.position);document.querySelector('#status').textContent='反応を確認';toast('エネルギーパルスを発射');return}
+if(tool==='detach'){const related=joints.filter(j=>j.a===p||j.b===p);if(!related.length){toast('このパーツはすでに分離しています');return}for(const j of related){world.removeConstraint(j.c);joints.splice(joints.indexOf(j),1);const other=j.a===p?j.b:j.a;}p.connected=false;p.body.applyImpulse(new CANNON.Vec3((Math.random()-.5)*2,2,(Math.random()-.5)*2),p.body.position);updateStatus();toast(p.name+'を分離しました');return}
+if(tool==='scan'){document.querySelector('#status').textContent='スキャン完了';toast('SCAN：'+p.name+' / 物理反応 正常');return}
+if(tool==='grab'){dragBody=p.body;dragBody._oldType=dragBody.type;dragBody.type=CANNON.Body.KINEMATIC;dragBody.updateMassProperties();const hit=raycaster.intersectObject(p.mesh)[0];const normal=new THREE.Vector3();camera.getWorldDirection(normal);dragPlane.setFromNormalAndCoplanarPoint(normal,hit.point);dragOffset.copy(p.mesh.position).sub(hit.point);controls.enabled=false;renderer.domElement.setPointerCapture(e.pointerId)}}
+function onMove(e){if(!dragBody)return;const r=renderer.domElement.getBoundingClientRect();mouse.x=(e.clientX-r.left)/r.width*2-1;mouse.y=-(e.clientY-r.top)/r.height*2+1;raycaster.setFromCamera(mouse,camera);const pt=new THREE.Vector3();if(raycaster.ray.intersectPlane(dragPlane,pt)){pt.add(dragOffset);dragBody.position.set(pt.x,pt.y,pt.z);dragBody.velocity.set(0,0,0);dragBody.angularVelocity.set(0,0,0)}}
+function onUp(){if(dragBody){dragBody.type=CANNON.Body.DYNAMIC;dragBody.updateMassProperties();dragBody.wakeUp();dragBody=null;controls.enabled=true}}
+renderer.domElement.addEventListener('pointerdown',onDown);renderer.domElement.addEventListener('pointermove',onMove);renderer.domElement.addEventListener('pointerup',onUp);renderer.domElement.addEventListener('pointercancel',onUp);
+document.querySelector('#reset').addEventListener('click',()=>{lowGravity=false;world.gravity.set(0,-9.82,0);document.querySelector('#grav').textContent='標準';setTool('grab');createAlien()});document.querySelector('#newAlien').addEventListener('click',()=>{createAlien();setTool('grab')});
+createAlien();
+const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.033);world.step(1/60,dt,3);for(const p of parts){p.mesh.position.copy(p.body.position);p.mesh.quaternion.copy(p.body.quaternion)}controls.update();renderer.render(scene,camera)}animate();
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2))});
+document.querySelector('#loading').style.display='none';
+</script>
+</body></html>
