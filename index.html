@@ -1,942 +1,407 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>ALIEN LAB - Physics Sandbox</title>
 
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#eaf1f4;font-family:Arial,"Noto Sans JP",sans-serif;touch-action:none}
-#scene{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
-.panel{position:fixed;z-index:5;background:rgba(255,255,255,.91);border:1px solid #d5e1e8;border-radius:14px;padding:12px;box-shadow:0 8px 30px #24384518;backdrop-filter:blur(12px)}
-.left{left:14px;top:70px;width:190px}
-.right{right:14px;top:14px;width:175px}
-h3{font-size:11px;letter-spacing:2px;color:#71808e;margin:0 0 10px}
-button{border:1px solid #dce5eb;background:white;border-radius:9px;padding:10px;color:#344451;font-weight:bold;cursor:pointer}
-.tool{width:100%;margin:3px 0;text-align:left;font-size:12px}
-.tool.active{background:#dff6fb;border-color:#63cce0;color:#087fa4}
-.stat{font-size:11px;display:flex;justify-content:space-between;margin:9px 0;color:#687987}
-.stat b{color:#243845}
-.actions{display:flex;gap:6px;margin-top:12px}
-.actions button{flex:1;font-size:10px}
-.primary{background:#172d3b;color:white}
-#top{position:fixed;left:16px;top:14px;z-index:5;font-weight:900;letter-spacing:3px;color:#263d4b;font-size:15px;pointer-events:none}
-#top small{display:block;font-size:9px;color:#82909a;letter-spacing:2px;margin-top:4px}
-#toast{position:fixed;z-index:10;top:15%;left:50%;transform:translateX(-50%);background:#172d3b;color:white;padding:10px 16px;border-radius:30px;font-size:12px;opacity:0;transition:.2s;pointer-events:none}
-#toast.show{opacity:1}
-#loading{position:fixed;inset:0;background:#edf3f6;z-index:20;display:grid;place-content:center;text-align:center;color:#263d4b;font-size:14px;letter-spacing:3px}
-#loading small{display:block;margin-top:10px;font-size:11px;letter-spacing:0;color:#71808e}
-#mobile{display:none;position:fixed;z-index:7;bottom:18px;left:50%;transform:translateX(-50%);gap:8px}
-.mobileBtn{background:#172d3b;color:white;border:1px solid #ffffff70;border-radius:50px;padding:15px 18px;font-size:12px;box-shadow:0 4px 15px #0003}
-#bottom{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);font-size:10px;color:#71808e;background:#ffffffd9;padding:8px 14px;border-radius:30px;white-space:nowrap;pointer-events:none}
+html,body{
+  margin:0;width:100%;height:100%;overflow:hidden;
+  background:#070d16;color:#eaf5ff;
+  font-family:Arial,"Noto Sans JP",sans-serif;
+  touch-action:none;
+}
+#game{position:fixed;inset:0}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+#topbar{
+  position:fixed;top:12px;left:12px;right:12px;
+  display:flex;justify-content:space-between;align-items:center;
+  pointer-events:none;z-index:5;gap:8px
+}
+.panel{
+  background:rgba(7,17,29,.82);
+  border:1px solid rgba(110,190,230,.3);
+  box-shadow:0 4px 22px #0008;
+  backdrop-filter:blur(10px);
+  border-radius:12px;padding:10px 13px
+}
+#logo{font-size:17px;font-weight:900;letter-spacing:2px}
+#subtitle{font-size:10px;color:#8faabd;margin-top:3px}
+#status{font-size:12px;color:#9eeaff;text-align:right}
+#toolbar{
+  position:fixed;left:50%;bottom:15px;transform:translateX(-50%);
+  display:flex;gap:7px;flex-wrap:wrap;justify-content:center;
+  width:min(760px,96vw);z-index:10
+}
+.tool{
+  color:#dff5ff;background:rgba(9,24,39,.92);
+  border:1px solid #31516a;border-radius:10px;
+  padding:10px 13px;font-size:12px;font-weight:bold;
+  cursor:pointer;min-width:76px;box-shadow:0 3px 12px #0007
+}
+.tool.active{background:#087eaa;border-color:#5de0ff;color:white}
+.tool:active{transform:scale(.96)}
+#side{
+  position:fixed;right:12px;top:88px;width:165px;
+  z-index:5;display:grid;gap:8px
+}
+#side button,#soundButton{
+  color:#dff5ff;background:rgba(8,22,36,.88);
+  border:1px solid #34536a;border-radius:9px;
+  padding:10px;font-size:11px;cursor:pointer
+}
+#hint{
+  position:fixed;left:50%;top:82px;transform:translateX(-50%);
+  background:#061522c9;border:1px solid #31546b;
+  border-radius:20px;padding:7px 13px;color:#a8c9dc;
+  font-size:11px;white-space:nowrap;z-index:5;
+  pointer-events:none
+}
+#soundButton{
+  position:fixed;left:12px;bottom:18px;z-index:11;
+  background:#07516c;border-color:#55c8ec
+}
+#crosshair{
+  position:fixed;left:50%;top:50%;width:8px;height:8px;
+  border:1px solid #a9edff;border-radius:50%;
+  transform:translate(-50%,-50%);pointer-events:none;
+  opacity:.65;z-index:4
+}
 @media(max-width:650px){
- .left{left:8px;top:auto;bottom:82px;width:145px;padding:8px}
- .right{right:8px;top:8px;width:145px;padding:9px}
- .tool{font-size:10px;padding:8px}
- .panel h3{font-size:9px}
- #top{font-size:12px;left:10px;top:8px}
- #mobile{display:flex}
- #bottom{display:none}
- .stat{font-size:10px;margin:6px 0}
- .actions button{padding:8px 3px}
+  #logo{font-size:14px}
+  #subtitle{font-size:9px}
+  .panel{padding:8px 10px}
+  #side{top:75px;right:7px;width:118px;gap:5px}
+  #side button{padding:8px 5px;font-size:10px}
+  #toolbar{bottom:62px;gap:5px;width:98vw}
+  .tool{min-width:65px;padding:9px 7px;font-size:11px}
+  #hint{top:70px;font-size:10px;max-width:80vw;white-space:normal;text-align:center}
+  #soundButton{bottom:10px;left:10px;padding:8px}
 }
 </style>
 
 <script type="importmap">
 {
- "imports":{
-  "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
- }
+  "imports":{
+    "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+    "cannon-es":"https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js"
+  }
 }
 </script>
 </head>
 
 <body>
-<canvas id="scene"></canvas>
+<div id="game"></div>
 
-<div id="loading">
- ALIEN LAB
- <small id="loadText">3D LABORATORY を準備中...</small>
+<div id="topbar">
+  <div class="panel">
+    <div id="logo">ALIEN LAB <span style="color:#53d9ff">X</span></div>
+    <div id="subtitle">ADVANCED PHYSICS SANDBOX</div>
+  </div>
+  <div class="panel">
+    <div id="status">SYSTEM ONLINE</div>
+    <div id="subtitle">LABORATORY 01</div>
+  </div>
 </div>
 
-<div id="top">ALIEN LAB<small>ULTIMATE PHYSICS SANDBOX</small></div>
+<div id="hint">オブジェクトを選択して操作しよう</div>
+<div id="crosshair"></div>
 
-<div class="panel left">
- <h3>TOOLS / 道具</h3>
- <button class="tool active" data-tool="grab">✋ つかむ・投げる</button>
- <button class="tool" data-tool="pulse">✦ 超強力パルス</button>
- <button class="tool" data-tool="detach">⟡ パーツ分離</button>
- <button class="tool" data-tool="scan">⌖ スキャン</button>
- <button class="tool" data-tool="gravity">◉ 低重力切替</button>
- <button class="tool" data-tool="spawn">＋ 物体を追加</button>
+<div id="side">
+  <button id="newAlien">＋ 新しいエイリアン</button>
+  <button id="addBox">＋ 物理ボックス</button>
+  <button id="addBall">＋ 金属球</button>
+  <button id="gravityButton">重力：ON</button>
+  <button id="resetButton">ステージリセット</button>
 </div>
 
-<div class="panel right">
- <h3>SPECIMEN STATUS</h3>
- <div class="stat"><span>状態</span><b id="status">待機中</b></div>
- <div class="stat"><span>接続パーツ</span><b id="parts">9 / 9</b></div>
- <div class="stat"><span>物体数</span><b id="objectCount">0</b></div>
- <div class="stat"><span>重力</span><b id="grav">標準</b></div>
- <div class="actions">
-  <button id="newAlien">再生成</button>
-  <button class="primary" id="reset">リセット</button>
- </div>
-</div>
+<button id="soundButton">🔊 サウンドを有効化</button>
 
-<div id="mobile">
- <button class="mobileBtn" id="mobilePulse">✦ PULSE</button>
- <button class="mobileBtn" id="mobileThrow">➤ THROW</button>
+<div id="toolbar">
+  <button class="tool active" data-tool="grab">✋ つかむ</button>
+  <button class="tool" data-tool="pulse">⚡ パルス</button>
+  <button class="tool" data-tool="detach">🧩 分離</button>
+  <button class="tool" data-tool="scan">🔍 スキャン</button>
+  <button class="tool" data-tool="throw">🚀 投げる</button>
 </div>
-
-<div id="bottom">クリック：操作 / ドラッグ：視点・物体移動 / ホイール：ズーム</div>
-<div id="toast"></div>
 
 <script type="module">
-import * as THREE from 'three';
-import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
-import * as CANNON from 'https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js';
+import * as THREE from "three";
+import {OrbitControls} from "three/addons/controls/OrbitControls.js";
+import * as CANNON from "cannon-es";
 
-const canvas=document.querySelector('#scene');
-const loading=document.querySelector('#loading');
-const loadText=document.querySelector('#loadText');
+/* =========================================================
+   ALIEN LAB X - COMPLETE SANDBOX
+   Three.js + cannon-es
+========================================================= */
 
-window.addEventListener('error',e=>{
- loadText.textContent='エラー: '+e.message;
-});
-window.addEventListener('unhandledrejection',e=>{
- loadText.textContent='読み込みエラー: '+String(e.reason);
-});
-
-const isMobile=matchMedia('(max-width:650px)').matches;
-
-const renderer=new THREE.WebGLRenderer({
- canvas,
- antialias:!isMobile,
- powerPreference:'high-performance'
-});
-renderer.setPixelRatio(Math.min(devicePixelRatio,isMobile?1.25:1.7));
-renderer.setSize(innerWidth,innerHeight);
-renderer.shadowMap.enabled=!isMobile;
-renderer.toneMapping=THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure=1.15;
+const container=document.getElementById("game");
+const statusEl=document.getElementById("status");
+const hintEl=document.getElementById("hint");
 
 const scene=new THREE.Scene();
-scene.background=new THREE.Color(0xeaf1f4);
-scene.fog=new THREE.Fog(0xeaf1f4,24,48);
+scene.background=new THREE.Color(0x07111c);
+scene.fog=new THREE.FogExp2(0x07111c,0.012);
 
-const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,.1,120);
-camera.position.set(6,5,10);
+const camera=new THREE.PerspectiveCamera(
+  65,window.innerWidth/window.innerHeight,0.1,250
+);
+camera.position.set(10,8,13);
+
+const renderer=new THREE.WebGLRenderer({
+  antialias:true,
+  powerPreference:"high-performance"
+});
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.05;
+container.appendChild(renderer.domElement);
 
 const controls=new OrbitControls(camera,renderer.domElement);
-controls.target.set(0,1.5,0);
 controls.enableDamping=true;
-controls.dampingFactor=.07;
+controls.dampingFactor=.06;
+controls.target.set(0,2,0);
+controls.maxDistance=27;
 controls.minDistance=3;
-controls.maxDistance=22;
 controls.maxPolarAngle=Math.PI*.49;
 
-scene.add(new THREE.HemisphereLight(0xffffff,0x9eafbd,2.1));
-
-const keyLight=new THREE.DirectionalLight(0xffffff,2.8);
-keyLight.position.set(5,9,5);
-keyLight.castShadow=!isMobile;
-keyLight.shadow.mapSize.set(1024,1024);
-scene.add(keyLight);
-
-for(const [x,z] of [[-6,-5],[6,-5],[-6,5],[6,5]]){
- const light=new THREE.PointLight(0x8deaff,15,12);
- light.position.set(x,4,z);
- scene.add(light);
-}
-
 const world=new CANNON.World({
- gravity:new CANNON.Vec3(0,-9.82,0)
+  gravity:new CANNON.Vec3(0,-9.82,0)
 });
 world.broadphase=new CANNON.SAPBroadphase(world);
 world.allowSleep=true;
 world.solver.iterations=12;
-
-const material=new CANNON.Material('objects');
-const floorMaterial=new CANNON.Material('floor');
-
-world.addContactMaterial(new CANNON.ContactMaterial(
- material,floorMaterial,
- {friction:.55,restitution:.2}
-));
-
-let parts=[];
-let joints=[];
-let props=[];
-let tool='grab';
-let lowGravity=false;
-let selectedBody=null;
-let dragPlane=new THREE.Plane();
-let dragOffset=new THREE.Vector3();
-let lastPointer=new THREE.Vector2();
-let throwVelocity=new THREE.Vector3();
-let lastMoveTime=0;
-let cameraShake=0;
-let pulseEffects=[];
-
-const raycaster=new THREE.Raycaster();
-const mouse=new THREE.Vector2();
-
-function toast(message){
- const el=document.querySelector('#toast');
- el.textContent=message;
- el.classList.add('show');
- clearTimeout(toast.timer);
- toast.timer=setTimeout(()=>el.classList.remove('show'),1700);
-}
-
-function boxMesh(w,h,d,color,rough=.65,metal=0){
- const mesh=new THREE.Mesh(
-  new THREE.BoxGeometry(w,h,d),
-  new THREE.MeshStandardMaterial({
-   color,roughness:rough,metalness:metal
-  })
- );
- mesh.castShadow=true;
- mesh.receiveShadow=true;
- return mesh;
-}
-
-// ======================================================
-// STAGE
-// ======================================================
-
-const floor=boxMesh(24,.3,24,0xf9fcfd);
-floor.position.y=-.2;
-scene.add(floor);
-
-const floorBody=new CANNON.Body({
- mass:0,
- material:floorMaterial,
- shape:new CANNON.Box(new CANNON.Vec3(12,.15,12)),
- position:new CANNON.Vec3(0,-.2,0)
-});
-world.addBody(floorBody);
-
-const grid=new THREE.GridHelper(24,48,0xb8d1dc,0xdce8ed);
-grid.position.y=-.04;
-scene.add(grid);
-
-// Laboratory boundary walls
-function addWall(x,y,z,w,h,d){
- const mesh=boxMesh(w,h,d,0xffffff,.7);
- mesh.position.set(x,y,z);
- scene.add(mesh);
-}
-addWall(0,3,-12,24,6,.25);
-addWall(-12,3,0,.25,6,24);
-addWall(12,3,0,.25,6,24);
-
-// Decorative equipment
-const platform=boxMesh(5,.35,4,0xdce7eb,.35,.12);
-platform.position.set(0,.05,0);
-scene.add(platform);
-
-for(let x=-1;x<=1;x++){
- const light=boxMesh(2,.08,1,0xffffff,.2);
- light.position.set(x*5,5.5,-3);
- scene.add(light);
-}
-
-// ======================================================
-// PHYSICS OBJECTS
-// ======================================================
-
-function addProp(type='box',position=null){
- const pos=position||[
-  (Math.random()-.5)*8,
-  2+Math.random()*2,
-  (Math.random()-.5)*8
- ];
-
- const mass=type==='box'?2:1.3;
- let shape,geometry,scale,color;
-
- if(type==='sphere'){
-  const r=.45+Math.random()*.2;
-  shape=new CANNON.Sphere(r);
-  geometry=new THREE.SphereGeometry(r,24,18);
-  scale=[1,1,1];
-  color=0x62b9d0;
- }else{
-  const sx=.45+Math.random()*.35;
-  const sy=.45+Math.random()*.35;
-  const sz=.45+Math.random()*.35;
-  shape=new CANNON.Box(new CANNON.Vec3(sx,sy,sz));
-  geometry=new THREE.BoxGeometry(sx*2,sy*2,sz*2);
-  scale=[1,1,1];
-  color=[0x8cb7c8,0xb4cbd5,0x79a9ba,0xc2d8df][Math.floor(Math.random()*4)];
- }
-
- const body=new CANNON.Body({
-  mass,
-  material,
-  linearDamping:.12,
-  angularDamping:.15
- });
- body.addShape(shape);
- body.position.set(...pos);
- body.allowSleep=true;
- world.addBody(body);
-
- const mesh=new THREE.Mesh(
-  geometry,
-  new THREE.MeshStandardMaterial({
-   color,roughness:.35,metalness:.15
-  })
- );
- mesh.castShadow=true;
- mesh.receiveShadow=true;
- scene.add(mesh);
-
- const item={body,mesh,type};
- props.push(item);
- updateObjectCount();
- return item;
-}
-
-function updateObjectCount(){
- document.querySelector('#objectCount').textContent=props.length;
-}
-
-for(let i=0;i<12;i++){
- addProp(i%3===0?'sphere':'box',[
-  (Math.random()-.5)*8,
-  2+Math.random()*3,
-  (Math.random()-.5)*8
- ]);
-}
-
-// ======================================================
-// ALIEN BODY
-// ======================================================
-
-function makePart(name,pos,radius,scale,color,shape='sphere',mass=1){
- const body=new CANNON.Body({
-  mass,
-  material,
-  linearDamping:.18,
-  angularDamping:.3
- });
-
- if(shape==='box'){
-  body.addShape(new CANNON.Box(
-   new CANNON.Vec3(radius[0],radius[1],radius[2])
-  ));
- }else{
-  body.addShape(new CANNON.Sphere(radius));
- }
-
- body.position.set(...pos);
- world.addBody(body);
-
- const geometry=shape==='box'
-  ?new THREE.BoxGeometry(...scale)
-  :new THREE.SphereGeometry(1,28,20);
-
- const mesh=new THREE.Mesh(
-  geometry,
-  new THREE.MeshStandardMaterial({
-   color,
-   roughness:.48,
-   metalness:.02
-  })
- );
- mesh.scale.set(...(shape==='box'?[1,1,1]:scale));
- mesh.castShadow=true;
- mesh.receiveShadow=true;
- scene.add(mesh);
-
- const part={name,body,mesh,connected:true};
- parts.push(part);
- return part;
-}
-
-// Correct cannon-es order:
-// bodyA, pivotA, bodyB, pivotB
-function link(a,b,pa,pb){
- const constraint=new CANNON.PointToPointConstraint(
-  a.body,
-  new CANNON.Vec3(...pa),
-  b.body,
-  new CANNON.Vec3(...pb),
-  1e6
- );
- world.addConstraint(constraint);
- joints.push({a,b,c:constraint});
-}
-
-function createAlien(){
- clearAlien();
-
- const skin=0x9aabb0;
- const skinLight=0xb6c3c7;
- const black=0x020609;
-
- // Slim torso
- const torso=makePart(
-  '胴体',[0,1.95,0],
-  [.25,.48,.2],[.5,.96,.4],
-  skin,'box',2.2
- );
-
- // Large gray alien head
- const head=makePart(
-  '頭',[0,2.95,0],
-  .57,[.9,1.15,.82],
-  skinLight,'sphere',1.1
- );
- link(torso,head,[0,.48,0],[0,-.48,0]);
-
- // Neck
- const neck=makePart(
-  '首',[0,2.47,0],
-  .16,[.27,.35,.27],
-  skin,'sphere',.35
- );
- link(torso,neck,[0,.35,0],[0,-.15,0]);
- link(neck,head,[0,.15,0],[0,-.5,0]);
-
- // Narrow pelvis
- const pelvis=makePart(
-  '腰',[0,1.25,0],
-  [.22,.2,.18],[.44,.4,.36],
-  skin,'box',1
- );
- link(torso,pelvis,[0,-.48,0],[0,.18,0]);
-
- // Arms
- const armL=makePart('左腕',[-.43,1.9,0],.17,[.22,.85,.22],skin,'sphere',.55);
- const armR=makePart('右腕',[.43,1.9,0],.17,[.22,.85,.22],skin,'sphere',.55);
- link(torso,armL,[-.24,.25,0],[0,.35,0]);
- link(torso,armR,[.24,.25,0],[0,.35,0]);
-
- // Hands
- const handL=makePart('左手',[-.46,1.35,0],.13,[.22,.25,.22],skinLight,'sphere',.25);
- const handR=makePart('右手',[.46,1.35,0],.13,[.22,.25,.22],skinLight,'sphere',.25);
- link(armL,handL,[0,-.4,0],[0,.1,0]);
- link(armR,handR,[0,-.4,0],[0,.1,0]);
-
- // Long legs
- const legL=makePart('左脚',[-.16,.65,0],.18,[.24,.9,.25],skin,'sphere',.7);
- const legR=makePart('右脚',[.16,.65,0],.18,[.24,.9,.25],skin,'sphere',.7);
- link(pelvis,legL,[-.13,-.15,0],[0,.4,0]);
- link(pelvis,legR,[.13,-.15,0],[0,.4,0]);
-
- // Large black almond eyes attached to the head
- for(const side of [-1,1]){
-  const eye=new THREE.Mesh(
-   new THREE.SphereGeometry(1,28,20),
-   new THREE.MeshStandardMaterial({
-    color:black,
-    roughness:.08,
-    metalness:.12
-   })
-  );
-  eye.scale.set(.19,.29,.09);
-  eye.position.set(side*.28,.04,.39);
-  head.mesh.add(eye);
-
-  const shine=new THREE.Mesh(
-   new THREE.SphereGeometry(.035,12,10),
-   new THREE.MeshBasicMaterial({color:0x8bb9c8})
-  );
-  shine.position.set(side*.28+.04,.12,.47);
-  head.mesh.add(shine);
- }
-
- // Small nose and subtle mouth
- const nose=new THREE.Mesh(
-  new THREE.SphereGeometry(.035,12,10),
-  new THREE.MeshStandardMaterial({color:0x71858c})
- );
- nose.position.set(0,-.1,.43);
- head.mesh.add(nose);
-
- const mouth=new THREE.Mesh(
-  new THREE.BoxGeometry(.13,.018,.018),
-  new THREE.MeshStandardMaterial({color:0x53636a})
- );
- mouth.position.set(0,-.22,.4);
- head.mesh.add(mouth);
-
- for(const p of parts){
-  p.body.velocity.set(0,0,0);
-  p.body.angularVelocity.set(0,0,0);
- }
- updateStatus();
- toast('グレイ型エイリアンを配置しました');
-}
-
-function clearAlien(){
- for(const joint of joints)world.removeConstraint(joint.c);
- joints=[];
- for(const p of parts){
-  world.removeBody(p.body);
-  scene.remove(p.mesh);
- }
- parts=[];
-}
-
-function updateStatus(){
- document.querySelector('#parts').textContent=
-  parts.filter(p=>p.connected).length+' / '+parts.length;
-}
-
-createAlien();
-
-// ======================================================
-// TOOL SELECTION
-// ======================================================
-
-function setTool(t){
- tool=t;
- document.querySelectorAll('.tool').forEach(b=>{
-  b.classList.toggle('active',b.dataset.tool===t);
- });
- const labels={
-  grab:'つかむ・投げる',
-  pulse:'パルス準備完了',
-  detach:'分離モード',
-  scan:'スキャン待機',
-  gravity:'低重力モード',
-  spawn:'物体追加モード'
- };
- document.querySelector('#status').textContent=labels[t]||'待機中';
-}
-
-document.querySelectorAll('.tool').forEach(button=>{
- button.addEventListener('click',()=>{
-  const t=button.dataset.tool;
-
-  if(t==='gravity'){
-   lowGravity=!lowGravity;
-   world.gravity.set(0,lowGravity?-2.2:-9.82,0);
-   document.querySelector('#grav').textContent=lowGravity?'低重力':'標準';
-   toast(lowGravity?'低重力 ON':'標準重力');
-   setTool('grab');
-   return;
-  }
-
-  if(t==='spawn'){
-   addProp(Math.random()>.5?'box':'sphere');
-   toast('物体を追加しました');
-   setTool('grab');
-   return;
-  }
-
-  setTool(t);
- });
-});
-
-// ======================================================
-// RAYCAST
-// ======================================================
-
-function getPointerHit(event){
- const rect=renderer.domElement.getBoundingClientRect();
- mouse.x=(event.clientX-rect.left)/rect.width*2-1;
- mouse.y=-(event.clientY-rect.top)/rect.height*2+1;
- raycaster.setFromCamera(mouse,camera);
-
- const objects=[
-  ...parts.map(p=>p.mesh),
-  ...props.map(p=>p.mesh)
- ];
- const hits=raycaster.intersectObjects(objects,false);
-
- if(!hits.length)return null;
-
- const mesh=hits[0].object;
- const alien=parts.find(p=>p.mesh===mesh);
- if(alien)return {body:alien.body,part:alien,point:hits[0].point};
-
- const prop=props.find(p=>p.mesh===mesh);
- if(prop)return {body:prop.body,prop,point:hits[0].point};
-
- return null;
-}
-
-// ======================================================
-// ENERGY PULSE
-// ======================================================
-
-function createPulseEffect(position){
- const group=new THREE.Group();
- group.position.copy(position);
- scene.add(group);
-
- const ring=new THREE.Mesh(
-  new THREE.TorusGeometry(.5,.055,12,64),
-  new THREE.MeshBasicMaterial({
-   color:0x54dfff,
-   transparent:true,
-   opacity:1
-  })
- );
- ring.rotation.x=Math.PI/2;
- group.add(ring);
-
- const glow=new THREE.PointLight(0x35cfff,30,15);
- group.add(glow);
-
- pulseEffects.push({
-  group,ring,glow,life:0
- });
-}
-
-function energyPulse(){
- const direction=new THREE.Vector3();
- camera.getWorldDirection(direction);
-
- const origin=camera.position.clone().add(
-  direction.clone().multiplyScalar(2.2)
- );
-
- createPulseEffect(origin);
-
- const center=new CANNON.Vec3(
-  origin.x,origin.y,origin.z
- );
-
- const range=11;
- const strength=85;
-
- let affected=0;
-
- // Push every movable object in the blast area
- const bodies=[
-  ...parts.map(p=>p.body),
-  ...props.map(p=>p.body)
- ];
-
- for(const body of bodies){
-  if(body.mass<=0)continue;
-
-  const delta=new CANNON.Vec3(
-   body.position.x-center.x,
-   body.position.y-center.y,
-   body.position.z-center.z
-  );
-
-  const distance=delta.length();
-  if(distance>range)continue;
-
-  const falloff=1-distance/range;
-  const force=strength*(.35+falloff*falloff);
-
-  if(distance>0.001)delta.scale(1/distance,delta);
-
-  // Add upward force so objects scatter dramatically
-  const impulse=new CANNON.Vec3(
-   delta.x*force,
-   delta.y*force+force*.55,
-   delta.z*force
-  );
-
-  body.applyImpulse(impulse,body.position);
-  body.wakeUp();
-  affected++;
- }
-
- cameraShake=1;
- document.querySelector('#status').textContent='強力パルス発射！';
- toast('SUPER ENERGY PULSE / '+affected+' 個に衝撃');
-}
-
-document.querySelector('#mobilePulse').addEventListener('click',energyPulse);
-
-// ======================================================
-// DETACH
-// ======================================================
-
-function detachPart(part){
- const related=joints.filter(j=>j.a===part||j.b===part);
-
- if(!related.length){
-  toast('すでに分離しています');
-  return;
- }
-
- for(const joint of related){
-  world.removeConstraint(joint.c);
-  joints.splice(joints.indexOf(joint),1);
- }
-
- part.connected=false;
- part.body.applyImpulse(
-  new CANNON.Vec3(
-   (Math.random()-.5)*4,
-   4,
-   (Math.random()-.5)*4
-  ),
-  part.body.position
- );
-
- updateStatus();
- toast(part.name+'を分離しました');
-}
-
-// ======================================================
-// POINTER / THROW
-// ======================================================
-
-function onPointerDown(event){
- if(event.pointerType==='mouse'&&event.button!==0)return;
-
- const hit=getPointerHit(event);
- if(!hit)return;
-
- if(tool==='pulse'){
-  energyPulse();
-  return;
- }
-
- if(tool==='scan'){
-  document.querySelector('#status').textContent='スキャン完了';
-  toast('SCAN : '+(hit.part?.name||'物体')+' / NORMAL');
-  return;
- }
-
- if(tool==='detach'){
-  if(hit.part)detachPart(hit.part);
-  return;
- }
-
- if(tool==='grab'){
-  selectedBody=hit.body;
-  selectedBody.wakeUp();
-
-  const normal=new THREE.Vector3();
-  camera.getWorldDirection(normal);
-  dragPlane.setFromNormalAndCoplanarPoint(normal,hit.point);
-
-  dragOffset.copy(
-   new THREE.Vector3(
-    selectedBody.position.x,
-    selectedBody.position.y,
-    selectedBody.position.z
-   )
-  ).sub(hit.point);
-
-  lastPointer.set(event.clientX,event.clientY);
-  throwVelocity.set(0,0,0);
-  lastMoveTime=performance.now();
-
-  controls.enabled=false;
-  renderer.domElement.setPointerCapture(event.pointerId);
- }
-}
-
-function onPointerMove(event){
- if(!selectedBody)return;
-
- const rect=renderer.domElement.getBoundingClientRect();
- mouse.x=(event.clientX-rect.left)/rect.width*2-1;
- mouse.y=-(event.clientY-rect.top)/rect.height*2+1;
- raycaster.setFromCamera(mouse,camera);
-
- const point=new THREE.Vector3();
- if(!raycaster.ray.intersectPlane(dragPlane,point))return;
-
- point.add(dragOffset);
-
- const now=performance.now();
- const elapsed=Math.max(.01,(now-lastMoveTime)/1000);
-
- throwVelocity.set(
-  (point.x-selectedBody.position.x)/elapsed,
-  (point.y-selectedBody.position.y)/elapsed,
-  (point.z-selectedBody.position.z)/elapsed
- );
-
- // Limit launch speed
- if(throwVelocity.length()>22)throwVelocity.setLength(22);
-
- selectedBody.position.set(point.x,point.y,point.z);
- selectedBody.velocity.set(0,0,0);
- selectedBody.angularVelocity.set(0,0,0);
-
- lastPointer.set(event.clientX,event.clientY);
- lastMoveTime=now;
-}
-
-function onPointerUp(){
- if(!selectedBody)return;
-
- selectedBody.velocity.set(
-  throwVelocity.x*.75,
-  throwVelocity.y*.75,
-  throwVelocity.z*.75
- );
-
- selectedBody.angularVelocity.set(
-  (Math.random()-.5)*5,
-  (Math.random()-.5)*5,
-  (Math.random()-.5)*5
- );
-
- selectedBody.wakeUp();
- selectedBody=null;
- controls.enabled=true;
-}
-
-renderer.domElement.addEventListener('pointerdown',onPointerDown);
-renderer.domElement.addEventListener('pointermove',onPointerMove);
-renderer.domElement.addEventListener('pointerup',onPointerUp);
-renderer.domElement.addEventListener('pointercancel',onPointerUp);
-
-// Mobile throw button: throw selected objects forward
-document.querySelector('#mobileThrow').addEventListener('click',()=>{
- const direction=new THREE.Vector3();
- camera.getWorldDirection(direction);
-
- const bodies=[
-  ...parts.map(p=>p.body),
-  ...props.map(p=>p.body)
- ];
-
- const target=bodies
-  .filter(b=>b.mass>0)
-  .sort((a,b)=>{
-   const da=new THREE.Vector3(
-    a.position.x-camera.position.x,
-    a.position.y-camera.position.y,
-    a.position.z-camera.position.z
-   ).length();
-   const db=new THREE.Vector3(
-    b.position.x-camera.position.x,
-    b.position.y-camera.position.y,
-    b.position.z-camera.position.z
-   ).length();
-   return da-db;
-  })[0];
-
- if(target){
-  target.applyImpulse(
-   new CANNON.Vec3(
-    direction.x*30,
-    direction.y*30+8,
-    direction.z*30
-   ),
-   target.position
-  );
-  toast('THROW!');
- }
-});
-
-// ======================================================
-// RESET
-// ======================================================
-
-document.querySelector('#newAlien').addEventListener('click',()=>{
- createAlien();
- setTool('grab');
-});
-
-document.querySelector('#reset').addEventListener('click',()=>{
- lowGravity=false;
- world.gravity.set(0,-9.82,0);
- document.querySelector('#grav').textContent='標準';
-
- for(const prop of props){
-  world.removeBody(prop.body);
-  scene.remove(prop.mesh);
- }
- props=[];
- updateObjectCount();
-
- for(let i=0;i<12;i++){
-  addProp(i%3===0?'sphere':'box',[
-   (Math.random()-.5)*8,
-   2+Math.random()*3,
-   (Math.random()-.5)*8
-  ]);
- }
-
- createAlien();
- setTool('grab');
- toast('ステージをリセットしました');
-});
-
-// ======================================================
-// ANIMATION
-// ======================================================
+world.solver.tolerance=.001;
+
+const matDefault=new CANNON.Material("default");
+const matFloor=new CANNON.Material("floor");
+world.defaultContactMaterial=new CANNON.ContactMaterial(
+  matDefault,matFloor,{friction:.82,restitution:.08}
+);
+world.defaultContactMaterial.friction=.55;
+world.defaultContactMaterial.restitution=.12;
 
 const clock=new THREE.Clock();
+const raycaster=new THREE.Raycaster();
+const pointer=new THREE.Vector2();
 
-function animate(){
- requestAnimationFrame(animate);
+let currentTool="grab";
+let selected=null;
+let grabbedBody=null;
+let grabPlane=new THREE.Plane();
+let grabOffset=new THREE.Vector3();
+let gravityEnabled=true;
+let soundEnabled=false;
+let audioContext=null;
+let masterGain=null;
+let alienParts=[];
+let alienConstraints=[];
+let physicsObjects=[];
+let visualObjects=[];
+let pulseEffects=[];
+let scanEffects=[];
+let lastImpactSound=0;
+let pointerDown=false;
+let activePointerId=null;
 
- const dt=Math.min(clock.getDelta(),.033);
- world.step(1/60,dt,3);
+const tmpVec=new THREE.Vector3();
+const tmpVec2=new THREE.Vector3();
 
- for(const part of parts){
-  part.mesh.position.copy(part.body.position);
-  part.mesh.quaternion.copy(part.body.quaternion);
- }
+/* ---------------- LIGHTING ---------------- */
 
- for(const prop of props){
-  prop.mesh.position.copy(prop.body.position);
-  prop.mesh.quaternion.copy(prop.body.quaternion);
- }
+scene.add(new THREE.HemisphereLight(0xb8e6ff,0x17202a,1.35));
 
- // Pulse ring animation
- for(let i=pulseEffects.length-1;i>=0;i--){
-  const effect=pulseEffects[i];
-  effect.life+=dt;
+const mainLight=new THREE.DirectionalLight(0xe2f4ff,2.1);
+mainLight.position.set(7,13,8);
+mainLight.castShadow=true;
+mainLight.shadow.mapSize.set(1024,1024);
+mainLight.shadow.camera.left=-18;
+mainLight.shadow.camera.right=18;
+mainLight.shadow.camera.top=18;
+mainLight.shadow.camera.bottom=-18;
+scene.add(mainLight);
 
-  const progress=effect.life/.75;
-  effect.ring.scale.setScalar(1+progress*12);
-  effect.ring.material.opacity=Math.max(0,1-progress);
-  effect.glow.intensity=Math.max(0,30*(1-progress));
+const cyanLight=new THREE.PointLight(0x22bfff,32,18,2);
+cyanLight.position.set(-7,4,-4);
+scene.add(cyanLight);
 
-  if(progress>=1){
-   scene.remove(effect.group);
-   effect.ring.geometry.dispose();
-   effect.ring.material.dispose();
-   pulseEffects.splice(i,1);
+const blueLight=new THREE.PointLight(0x367aff,24,16,2);
+blueLight.position.set(7,3,5);
+scene.add(blueLight);
+
+/* ---------------- MATERIALS ---------------- */
+
+function physicalMaterial(color,roughness=.6,metalness=.1,extra={}){
+  return new THREE.MeshStandardMaterial({
+    color,roughness,metalness,...extra
+  });
+}
+
+const floorMat=physicalMaterial(0x263542,.48,.42);
+const wallMat=physicalMaterial(0x344956,.72,.25);
+const darkMetal=physicalMaterial(0x111c27,.3,.8);
+const silver=physicalMaterial(0x8cabb9,.27,.8);
+const glassMat=new THREE.MeshPhysicalMaterial({
+  color:0x83dfff,metalness:.05,roughness:.08,
+  transmission:.35,transparent:true,opacity:.22,
+  thickness:.25,depthWrite:false
+});
+const glowMat=new THREE.MeshBasicMaterial({color:0x35dfff});
+
+/* ---------------- PHYSICS HELPERS ---------------- */
+
+function addStaticBox(name,x,y,z,sx,sy,sz,material,visible=true){
+  const mesh=new THREE.Mesh(
+    new THREE.BoxGeometry(sx,sy,sz),material
+  );
+  mesh.name=name;
+  mesh.position.set(x,y,z);
+  mesh.receiveShadow=true;
+  mesh.castShadow=true;
+  if(visible)scene.add(mesh);
+
+  const body=new CANNON.Body({
+    mass:0,
+    material:matFloor,
+    shape:new CANNON.Box(new CANNON.Vec3(sx/2,sy/2,sz/2))
+  });
+  body.position.set(x,y,z);
+  body.userData={name,staticStage:true};
+  world.addBody(body);
+  return {mesh,body};
+}
+
+function addVisualBox(name,x,y,z,sx,sy,sz,material){
+  const mesh=new THREE.Mesh(new THREE.BoxGeometry(sx,sy,sz),material);
+  mesh.name=name;
+  mesh.position.set(x,y,z);
+  mesh.castShadow=true;
+  mesh.receiveShadow=true;
+  scene.add(mesh);
+  visualObjects.push(mesh);
+  return mesh;
+}
+
+/* ---------------- REALISTIC LAB STAGE ---------------- */
+
+function buildLaboratory(){
+  // Main room: 22 x 22, ceiling height 8
+  addStaticBox("LAB FLOOR",0,-.25,0,22,.5,22,floorMat);
+  addStaticBox("NORTH WALL",0,4,-11,22,8,.45,wallMat);
+  addStaticBox("SOUTH WALL",0,4,11,22,8,.45,wallMat);
+  addStaticBox("WEST WALL",-11,4,0,.45,8,22,wallMat);
+  addStaticBox("EAST WALL",11,4,0,.45,8,22,wallMat);
+  addStaticBox("CEILING",0,8.25,0,22,.5,22,darkMetal);
+
+  // Floor panels
+  for(let x=-10;x<=10;x+=2){
+    for(let z=-10;z<=10;z+=2){
+      const line=new THREE.Mesh(
+        new THREE.BoxGeometry(.025,.012,1.98),
+        physicalMaterial(0x526b7a,.5,.35)
+      );
+      line.position.set(x,.012,z);
+      scene.add(line);
+    }
   }
- }
 
- // Camera shake
- if(cameraShake>0){
-  const shake=cameraShake*.045;
-  camera.position.x+=(Math.random()-.5)*shake;
-  camera.position.y+=(Math.random()-.5)*shake;
-  cameraShake=Math.max(0,cameraShake-dt*2.5);
- }
+  // Wall rails and structural columns
+  for(let x=-9;x<=9;x+=3){
+    addVisualBox("WALL COLUMN",x,4,-10.72,.13,7.8,.12,darkMetal);
+    addVisualBox("WALL COLUMN",x,4,10.72,.13,7.8,.12,darkMetal);
+  }
 
- controls.update();
- renderer.render(scene,camera);
+  // Ceiling light strips
+  for(let x=-7;x<=7;x+=7){
+    const lamp=addVisualBox("CEILING LIGHT",x,7.92,0,3.8,.06,.45,
+      new THREE.MeshBasicMaterial({color:0xc9f5ff}));
+    const light=new THREE.PointLight(0x9beaff,22,10,2);
+    light.position.set(x,7.5,0);
+    scene.add(light);
+  }
+
+  // Glass containment chamber around the central test area
+  const chamberY=2.1;
+  addStaticBox("GLASS FRONT",0,chamberY,-4.2,7,4.2,.12,glassMat);
+  addStaticBox("GLASS BACK",0,chamberY,4.2,7,4.2,.12,glassMat);
+  addStaticBox("GLASS LEFT",-3.5,chamberY,0,.12,4.2,8.4,glassMat);
+  addStaticBox("GLASS RIGHT",3.5,chamberY,0,.12,4.2,8.4,glassMat);
+
+  // Chamber metal frame
+  for(const x of [-3.55,3.55]){
+    for(const z of [-4.25,4.25]){
+      addVisualBox("CHAMBER FRAME",x,2.1,z,.16,4.4,.16,silver);
+    }
+  }
+  addVisualBox("CHAMBER TOP FRAME",0,4.3,0,7.2,.16,8.6,silver);
+  addVisualBox("CHAMBER BASE FRAME",0,.08,0,7.2,.16,8.6,silver);
+
+  // Laboratory work benches
+  for(const z of [-8.3,8.3]){
+    addStaticBox("WORK BENCH",0,1.05,z,8,.25,1.2,darkMetal);
+    for(const x of [-3.5,3.5]){
+      addStaticBox("BENCH LEG",x,.5,z,.18,1,.18,silver);
+    }
+  }
+
+  // Monitors
+  for(const x of [-2.5,0,2.5]){
+    const screen=addVisualBox("LAB MONITOR",x,2.15,-8.65,1.65,1,.12,
+      new THREE.MeshStandardMaterial({
+        color:0x061827,emissive:0x087da8,emissiveIntensity:1.2,
+        metalness:.4,roughness:.25
+      }));
+    const stand=addVisualBox("MONITOR STAND",x,1.55,-8.65,.15,.25,.15,silver);
+  }
+
+  // Pipes along the walls
+  function pipe(a,b,r,color=0x5e8294){
+    const start=new THREE.Vector3(...a);
+    const end=new THREE.Vector3(...b);
+    const dir=end.clone().sub(start);
+    const mesh=new THREE.Mesh(
+      new THREE.CylinderGeometry(r,r,dir.length(),12),
+      physicalMaterial(color,.32,.8)
+    );
+    mesh.position.copy(start).add(end).multiplyScalar(.5);
+    mesh.quaternion.setFromUnitVectors(
+      new THREE.Vector3(0,1,0),dir.normalize()
+    );
+    mesh.castShadow=true;
+    scene.add(mesh);
+  }
+  pipe([-10,6,-9],[10,6,-9],.12);
+  pipe([-10,5.5,9],[10,5.5,9],.09);
+  pipe([-9,6,-9],[-9,6,9],.1);
+  pipe([9,6,-9],[9,6,9],.1);
+
+  // Warning stripes around test chamber
+  for(let i=-3;i<=3;i++){
+    addVisualBox("FLOOR WARNING STRIPE",i,.025,-4.65,.42,.018,.08,
+      new THREE.MeshBasicMaterial({color:i%2===0?0xffc247:0x17232b}));
+    addVisualBox("FLOOR WARNING STRIPE",i,.025,4.65,.42,.018,.08,
+      new THREE.MeshBasicMaterial({color:i%2===0?0xffc247:0x17232b}));
+  }
+
+  // Small equipment cabinets
+  for(const x of [-8.8,8.8]){
+    addStaticBox("EQUIPMENT CABINET",x,1.4,0,1.4,2.8,1.3,darkMetal);
+    addVisualBox("CABINET PANEL",x,1.65,x<0?.66:-.66,.8,.9,.025,
+      new THREE.MeshStandardMaterial({
+        color:0x092b3c,emissive:0x087ca0,emissiveIntensity:.7
+      }));
+  }
+
+  // Ambient floor lights
+  for(let x=-9;x<=9;x+=3){
+    const strip=addVisualBox("FLOOR LED",x,.035,-10.45,1.2,.025,.08,glowMat);
+  }
 }
 
-animate();
-
-// ======================================================
-// RESPONSIVE RESIZE
-// ======================================================
-
-function resize(){
- camera.aspect=innerWidth/innerHeight;
- camera.updateProjectionMatrix();
- renderer.setSize(innerWidth,innerHeight);
- renderer.setPixelRatio(
-  Math.min(devicePixelRatio,isMobile?1.25:1.7)
- );
-}
-
-addEventListener('resize',resize);
-
-loading.style.display='none';
-toast('ALIEN LAB READY');
-</script>
-</body>
-</html>
+buildLaboratory();
