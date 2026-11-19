@@ -1,94 +1,48 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>ALIEN LAB - Physics Sandbox</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>ALIEN LAB X</title>
 
 <style>
 *{box-sizing:border-box}
-html,body{
-  margin:0;width:100%;height:100%;overflow:hidden;
-  background:#070d16;color:#eaf5ff;
-  font-family:Arial,"Noto Sans JP",sans-serif;
-  touch-action:none;
-}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#030811;color:#eaf7ff;font-family:Arial,sans-serif;touch-action:none}
 #game{position:fixed;inset:0}
 canvas{display:block;width:100%;height:100%;touch-action:none}
-#topbar{
-  position:fixed;top:12px;left:12px;right:12px;
-  display:flex;justify-content:space-between;align-items:center;
-  pointer-events:none;z-index:5;gap:8px
-}
-.panel{
-  background:rgba(7,17,29,.82);
-  border:1px solid rgba(110,190,230,.3);
-  box-shadow:0 4px 22px #0008;
-  backdrop-filter:blur(10px);
-  border-radius:12px;padding:10px 13px
-}
-#logo{font-size:17px;font-weight:900;letter-spacing:2px}
-#subtitle{font-size:10px;color:#8faabd;margin-top:3px}
-#status{font-size:12px;color:#9eeaff;text-align:right}
-#toolbar{
-  position:fixed;left:50%;bottom:15px;transform:translateX(-50%);
-  display:flex;gap:7px;flex-wrap:wrap;justify-content:center;
-  width:min(760px,96vw);z-index:10
-}
-.tool{
-  color:#dff5ff;background:rgba(9,24,39,.92);
-  border:1px solid #31516a;border-radius:10px;
-  padding:10px 13px;font-size:12px;font-weight:bold;
-  cursor:pointer;min-width:76px;box-shadow:0 3px 12px #0007
-}
-.tool.active{background:#087eaa;border-color:#5de0ff;color:white}
-.tool:active{transform:scale(.96)}
-#side{
-  position:fixed;right:12px;top:88px;width:165px;
-  z-index:5;display:grid;gap:8px
-}
-#side button,#soundButton{
-  color:#dff5ff;background:rgba(8,22,36,.88);
-  border:1px solid #34536a;border-radius:9px;
-  padding:10px;font-size:11px;cursor:pointer
-}
-#hint{
-  position:fixed;left:50%;top:82px;transform:translateX(-50%);
-  background:#061522c9;border:1px solid #31546b;
-  border-radius:20px;padding:7px 13px;color:#a8c9dc;
-  font-size:11px;white-space:nowrap;z-index:5;
-  pointer-events:none
-}
-#soundButton{
-  position:fixed;left:12px;bottom:18px;z-index:11;
-  background:#07516c;border-color:#55c8ec
-}
-#crosshair{
-  position:fixed;left:50%;top:50%;width:8px;height:8px;
-  border:1px solid #a9edff;border-radius:50%;
-  transform:translate(-50%,-50%);pointer-events:none;
-  opacity:.65;z-index:4
-}
+.panel{background:#071522e8;border:1px solid #31536a;border-radius:11px;padding:9px 12px;backdrop-filter:blur(8px)}
+#top{position:fixed;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;pointer-events:none;z-index:5}
+#logo{font-size:16px;font-weight:900;letter-spacing:2px}
+#status{font-size:11px;color:#73e1ff;text-align:right}
+#hint{position:fixed;top:75px;left:50%;transform:translateX(-50%);padding:7px 12px;border-radius:18px;background:#071522dd;border:1px solid #31536a;font-size:11px;white-space:nowrap;z-index:5;pointer-events:none}
+#tools{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:min(720px,98vw);display:flex;justify-content:center;flex-wrap:wrap;gap:6px;z-index:10}
+button{background:#102638;color:#e6f7ff;border:1px solid #42677e;border-radius:9px;padding:10px 12px;font-weight:bold;font-size:12px;cursor:pointer}
+button.active{background:#087da5;border-color:#69e1ff}
+button:active{transform:scale(.96)}
+#side{position:fixed;right:10px;top:82px;display:grid;gap:6px;width:145px;z-index:6}
+#side button{font-size:11px;padding:9px 5px}
+#sound{position:fixed;left:10px;bottom:12px;z-index:11;background:#07516c}
+#crosshair{position:fixed;left:50%;top:50%;width:8px;height:8px;border:1px solid #a9eaff;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:4}
 @media(max-width:650px){
-  #logo{font-size:14px}
-  #subtitle{font-size:9px}
-  .panel{padding:8px 10px}
-  #side{top:75px;right:7px;width:118px;gap:5px}
-  #side button{padding:8px 5px;font-size:10px}
-  #toolbar{bottom:62px;gap:5px;width:98vw}
-  .tool{min-width:65px;padding:9px 7px;font-size:11px}
-  #hint{top:70px;font-size:10px;max-width:80vw;white-space:normal;text-align:center}
-  #soundButton{bottom:10px;left:10px;padding:8px}
+ #logo{font-size:13px}
+ #status{font-size:9px}
+ #hint{top:65px;font-size:10px;max-width:75vw;white-space:normal;text-align:center}
+ #side{top:75px;right:6px;width:112px}
+ #side button{font-size:10px;padding:8px 4px}
+ #tools{bottom:58px;gap:4px}
+ #tools button{min-width:61px;padding:9px 5px;font-size:10px}
+ #sound{bottom:8px;padding:8px}
 }
 </style>
 
 <script type="importmap">
 {
-  "imports":{
-    "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-    "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
-    "cannon-es":"https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js"
-  }
+ "imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+  "cannon-es":"https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js"
+ }
 }
 </script>
 </head>
@@ -96,36 +50,36 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 <body>
 <div id="game"></div>
 
-<div id="topbar">
-  <div class="panel">
-    <div id="logo">ALIEN LAB <span style="color:#53d9ff">X</span></div>
-    <div id="subtitle">ADVANCED PHYSICS SANDBOX</div>
-  </div>
-  <div class="panel">
-    <div id="status">SYSTEM ONLINE</div>
-    <div id="subtitle">LABORATORY 01</div>
-  </div>
+<div id="top">
+ <div class="panel">
+  <div id="logo">ALIEN LAB <span style="color:#50dfff">X</span></div>
+  <div style="font-size:9px;color:#8baabd">ADVANCED PHYSICS SANDBOX</div>
+ </div>
+ <div class="panel">
+  <div id="status">SYSTEM ONLINE</div>
+  <div style="font-size:9px;color:#8baabd;text-align:right">LABORATORY 01</div>
+ </div>
 </div>
 
-<div id="hint">オブジェクトを選択して操作しよう</div>
+<div id="hint">対象を選択して操作しよう</div>
 <div id="crosshair"></div>
 
 <div id="side">
-  <button id="newAlien">＋ 新しいエイリアン</button>
-  <button id="addBox">＋ 物理ボックス</button>
-  <button id="addBall">＋ 金属球</button>
-  <button id="gravityButton">重力：ON</button>
-  <button id="resetButton">ステージリセット</button>
+ <button id="newAlien">＋ 新しいエイリアン</button>
+ <button id="addBox">＋ 物理ボックス</button>
+ <button id="addBall">＋ 金属球</button>
+ <button id="gravity">重力：ON</button>
+ <button id="reset">ステージリセット</button>
 </div>
 
-<button id="soundButton">🔊 サウンドを有効化</button>
+<button id="sound">🔊 サウンド ON</button>
 
-<div id="toolbar">
-  <button class="tool active" data-tool="grab">✋ つかむ</button>
-  <button class="tool" data-tool="pulse">⚡ パルス</button>
-  <button class="tool" data-tool="detach">🧩 分離</button>
-  <button class="tool" data-tool="scan">🔍 スキャン</button>
-  <button class="tool" data-tool="throw">🚀 投げる</button>
+<div id="tools">
+ <button class="tool active" data-tool="grab">✋ つかむ</button>
+ <button class="tool" data-tool="pulse">⚡ パルス</button>
+ <button class="tool" data-tool="detach">🧩 分離</button>
+ <button class="tool" data-tool="scan">🔍 スキャン</button>
+ <button class="tool" data-tool="throw">🚀 投げる</button>
 </div>
 
 <script type="module">
@@ -133,30 +87,27 @@ import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import * as CANNON from "cannon-es";
 
-/* =========================================================
-   ALIEN LAB X - COMPLETE SANDBOX
-   Three.js + cannon-es
-========================================================= */
+/* =====================================================
+   CORE
+===================================================== */
 
 const container=document.getElementById("game");
 const statusEl=document.getElementById("status");
 const hintEl=document.getElementById("hint");
 
 const scene=new THREE.Scene();
-scene.background=new THREE.Color(0x07111c);
-scene.fog=new THREE.FogExp2(0x07111c,0.012);
+scene.background=new THREE.Color(0x02070e);
+scene.fog=new THREE.FogExp2(0x02070e,.006);
 
-const camera=new THREE.PerspectiveCamera(
-  65,window.innerWidth/window.innerHeight,0.1,250
-);
-camera.position.set(10,8,13);
+const camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,500);
+camera.position.set(12,8,16);
 
 const renderer=new THREE.WebGLRenderer({
-  antialias:true,
-  powerPreference:"high-performance"
+ antialias:true,
+ powerPreference:"high-performance"
 });
-renderer.setSize(window.innerWidth,window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 renderer.shadowMap.enabled=true;
 renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;
@@ -165,1368 +116,1295 @@ container.appendChild(renderer.domElement);
 
 const controls=new OrbitControls(camera,renderer.domElement);
 controls.enableDamping=true;
-controls.dampingFactor=.06;
-controls.target.set(0,2,0);
-controls.maxDistance=27;
+controls.dampingFactor=.075;
+controls.target.set(0,2.5,0);
 controls.minDistance=3;
+controls.maxDistance=55;
 controls.maxPolarAngle=Math.PI*.49;
 
 const world=new CANNON.World({
-  gravity:new CANNON.Vec3(0,-9.82,0)
+ gravity:new CANNON.Vec3(0,-9.82,0)
 });
 world.broadphase=new CANNON.SAPBroadphase(world);
 world.allowSleep=true;
-world.solver.iterations=12;
+world.solver.iterations=14;
 world.solver.tolerance=.001;
 
 const matDefault=new CANNON.Material("default");
 const matFloor=new CANNON.Material("floor");
-world.defaultContactMaterial=new CANNON.ContactMaterial(
-  matDefault,matFloor,{friction:.82,restitution:.08}
-);
 world.defaultContactMaterial.friction=.55;
-world.defaultContactMaterial.restitution=.12;
+world.defaultContactMaterial.restitution=.08;
+world.addContactMaterial(new CANNON.ContactMaterial(
+ matDefault,matFloor,{friction:.8,restitution:.05}
+));
 
 const clock=new THREE.Clock();
 const raycaster=new THREE.Raycaster();
 const pointer=new THREE.Vector2();
 
 let currentTool="grab";
+let gravityEnabled=true;
 let selected=null;
 let grabbedBody=null;
-let grabPlane=new THREE.Plane();
-let grabOffset=new THREE.Vector3();
-let gravityEnabled=true;
+let grabAnchor=null;
+let grabConstraint=null;
+let grabDistance=5;
 let soundEnabled=false;
 let audioContext=null;
 let masterGain=null;
-let alienParts=[];
-let alienConstraints=[];
-let physicsObjects=[];
-let visualObjects=[];
-let pulseEffects=[];
-let scanEffects=[];
-let lastImpactSound=0;
-let pointerDown=false;
-let activePointerId=null;
+let lastImpact=0;
 
-const tmpVec=new THREE.Vector3();
-const tmpVec2=new THREE.Vector3();
+const alienParts=[];
+const alienConstraints=[];
+const physicsObjects=[];
+const visualObjects=[];
+const pulseEffects=[];
+const scanEffects=[];
 
-/* ---------------- LIGHTING ---------------- */
+const skin=new THREE.MeshStandardMaterial({
+ color:0x9da9a6,roughness:.55,metalness:.02
+});
+const skinLight=new THREE.MeshStandardMaterial({
+ color:0xb7c1bc,roughness:.42,metalness:.02
+});
+const skinDark=new THREE.MeshStandardMaterial({
+ color:0x687774,roughness:.65
+});
+const eyeMat=new THREE.MeshPhysicalMaterial({
+ color:0x020609,roughness:.08,metalness:.1,
+ clearcoat:1,clearcoatRoughness:.04
+});
+const mouthMat=new THREE.MeshStandardMaterial({
+ color:0x303b3b,roughness:.8
+});
+const metal= new THREE.MeshStandardMaterial({
+ color:0x758f9c,roughness:.3,metalness:.8
+});
+const darkMetal=new THREE.MeshStandardMaterial({
+ color:0x111e29,roughness:.35,metalness:.8
+});
+const floorMat=new THREE.MeshStandardMaterial({
+ color:0x263642,roughness:.5,metalness:.35
+});
+const wallMat=new THREE.MeshStandardMaterial({
+ color:0x182b39,roughness:.75,metalness:.3
+});
+const glassMat=new THREE.MeshPhysicalMaterial({
+ color:0x80dfff,roughness:.1,metalness:.05,
+ transmission:.25,transparent:true,opacity:.2,
+ thickness:.2,depthWrite:false
+});
+const glowMat=new THREE.MeshBasicMaterial({color:0x45dcff});
 
-scene.add(new THREE.HemisphereLight(0xb8e6ff,0x17202a,1.35));
+/* =====================================================
+   LIGHTS
+===================================================== */
 
-const mainLight=new THREE.DirectionalLight(0xe2f4ff,2.1);
-mainLight.position.set(7,13,8);
-mainLight.castShadow=true;
-mainLight.shadow.mapSize.set(1024,1024);
-mainLight.shadow.camera.left=-18;
-mainLight.shadow.camera.right=18;
-mainLight.shadow.camera.top=18;
-mainLight.shadow.camera.bottom=-18;
-scene.add(mainLight);
+scene.add(new THREE.HemisphereLight(0xb8e9ff,0x111b26,1.35));
 
-const cyanLight=new THREE.PointLight(0x22bfff,32,18,2);
-cyanLight.position.set(-7,4,-4);
-scene.add(cyanLight);
+const sun=new THREE.DirectionalLight(0xe2f5ff,2);
+sun.position.set(10,30,10);
+sun.castShadow=true;
+sun.shadow.mapSize.set(1024,1024);
+sun.shadow.camera.left=-35;
+sun.shadow.camera.right=35;
+sun.shadow.camera.top=35;
+sun.shadow.camera.bottom=-35;
+scene.add(sun);
 
-const blueLight=new THREE.PointLight(0x367aff,24,16,2);
-blueLight.position.set(7,3,5);
+const blueLight=new THREE.PointLight(0x168fff,35,45,2);
+blueLight.position.set(-12,8,-12);
 scene.add(blueLight);
 
-/* ---------------- MATERIALS ---------------- */
+const cyanLight=new THREE.PointLight(0x19cfff,35,45,2);
+cyanLight.position.set(12,8,12);
+scene.add(cyanLight);
 
-function physicalMaterial(color,roughness=.6,metalness=.1,extra={}){
-  return new THREE.MeshStandardMaterial({
-    color,roughness,metalness,...extra
-  });
-}
+/* =====================================================
+   STAGE PHYSICS
+===================================================== */
 
-const floorMat=physicalMaterial(0x263542,.48,.42);
-const wallMat=physicalMaterial(0x344956,.72,.25);
-const darkMetal=physicalMaterial(0x111c27,.3,.8);
-const silver=physicalMaterial(0x8cabb9,.27,.8);
-const glassMat=new THREE.MeshPhysicalMaterial({
-  color:0x83dfff,metalness:.05,roughness:.08,
-  transmission:.35,transparent:true,opacity:.22,
-  thickness:.25,depthWrite:false
-});
-const glowMat=new THREE.MeshBasicMaterial({color:0x35dfff});
+function addStaticBox(name,x,y,z,sx,sy,sz,material){
+ const mesh=new THREE.Mesh(
+  new THREE.BoxGeometry(sx,sy,sz),material
+ );
+ mesh.name=name;
+ mesh.position.set(x,y,z);
+ mesh.receiveShadow=true;
+ mesh.castShadow=true;
+ scene.add(mesh);
 
-/* ---------------- PHYSICS HELPERS ---------------- */
+ const body=new CANNON.Body({
+  mass:0,
+  material:matFloor,
+  shape:new CANNON.Box(new CANNON.Vec3(sx/2,sy/2,sz/2))
+ });
+ body.position.set(x,y,z);
+ body.userData={name,stage:true};
+ world.addBody(body);
 
-function addStaticBox(name,x,y,z,sx,sy,sz,material,visible=true){
-  const mesh=new THREE.Mesh(
-    new THREE.BoxGeometry(sx,sy,sz),material
-  );
-  mesh.name=name;
-  mesh.position.set(x,y,z);
-  mesh.receiveShadow=true;
-  mesh.castShadow=true;
-  if(visible)scene.add(mesh);
-
-  const body=new CANNON.Body({
-    mass:0,
-    material:matFloor,
-    shape:new CANNON.Box(new CANNON.Vec3(sx/2,sy/2,sz/2))
-  });
-  body.position.set(x,y,z);
-  body.userData={name,staticStage:true};
-  world.addBody(body);
-  return {mesh,body};
+ return {mesh,body};
 }
 
 function addVisualBox(name,x,y,z,sx,sy,sz,material){
-  const mesh=new THREE.Mesh(new THREE.BoxGeometry(sx,sy,sz),material);
-  mesh.name=name;
-  mesh.position.set(x,y,z);
-  mesh.castShadow=true;
-  mesh.receiveShadow=true;
-  scene.add(mesh);
-  visualObjects.push(mesh);
-  return mesh;
+ const mesh=new THREE.Mesh(
+  new THREE.BoxGeometry(sx,sy,sz),material
+ );
+ mesh.name=name;
+ mesh.position.set(x,y,z);
+ mesh.castShadow=true;
+ mesh.receiveShadow=true;
+ scene.add(mesh);
+ visualObjects.push(mesh);
+ return mesh;
 }
 
-/* ---------------- REALISTIC LAB STAGE ---------------- */
+/* =====================================================
+   HUGE CLOSED LAB
+===================================================== */
 
 function buildLaboratory(){
-  // Main room: 22 x 22, ceiling height 8
-  addStaticBox("LAB FLOOR",0,-.25,0,22,.5,22,floorMat);
-  addStaticBox("NORTH WALL",0,4,-11,22,8,.45,wallMat);
-  addStaticBox("SOUTH WALL",0,4,11,22,8,.45,wallMat);
-  addStaticBox("WEST WALL",-11,4,0,.45,8,22,wallMat);
-  addStaticBox("EAST WALL",11,4,0,.45,8,22,wallMat);
-  addStaticBox("CEILING",0,8.25,0,22,.5,22,darkMetal);
+ const S=240;
+ const H=60;
+ const T=5;
+ const HALF=S/2;
 
-  // Floor panels
-  for(let x=-10;x<=10;x+=2){
-    for(let z=-10;z<=10;z+=2){
-      const line=new THREE.Mesh(
-        new THREE.BoxGeometry(.025,.012,1.98),
-        physicalMaterial(0x526b7a,.5,.35)
-      );
-      line.position.set(x,.012,z);
-      scene.add(line);
-    }
+ addStaticBox("FLOOR",0,-.5,0,S,1,S,floorMat);
+
+ addStaticBox("NORTH WALL",0,H/2,-HALF,S,H,T,wallMat);
+ addStaticBox("SOUTH WALL",0,H/2,HALF,S,H,T,wallMat);
+ addStaticBox("WEST WALL",-HALF,H/2,0,T,H,S,wallMat);
+ addStaticBox("EAST WALL",HALF,H/2,0,T,H,S,wallMat);
+
+ addStaticBox("CEILING",0,H+.5,0,S,T,S,darkMetal);
+
+ // Interior wall lining: prevents gaps from showing the outside
+ const inner=new THREE.MeshBasicMaterial({
+  color:0x050c13,side:THREE.BackSide
+ });
+ const shell=new THREE.Mesh(
+  new THREE.BoxGeometry(S-1,H-1,S-1),inner
+ );
+ shell.position.y=H/2;
+ scene.add(shell);
+
+ // Wall supports
+ for(let p=-110;p<=110;p+=12){
+  addVisualBox("WALL SUPPORT",p,30,-117,.3,59,.3,metal);
+  addVisualBox("WALL SUPPORT",p,30,117,.3,59,.3,metal);
+  addVisualBox("WALL SUPPORT",-117,30,p,.3,59,.3,metal);
+  addVisualBox("WALL SUPPORT",117,30,p,.3,59,.3,metal);
+ }
+
+ // Floor guide grid
+ const grid=new THREE.GridHelper(S,120,0x456d82,0x233c4d);
+ grid.position.y=.015;
+ scene.add(grid);
+
+ // Main test platform
+ addStaticBox("TEST PLATFORM",0,.15,0,22,.3,22,darkMetal);
+
+ // Glass containment chamber
+ const C=14;
+ const CY=2.5;
+ const CH=5;
+
+ addStaticBox("GLASS FRONT",0,CY,-C/2,C,CH,.18,glassMat);
+ addStaticBox("GLASS BACK",0,CY,C/2,C,CH,.18,glassMat);
+ addStaticBox("GLASS LEFT",-C/2,CY,0,.18,CH,C,glassMat);
+ addStaticBox("GLASS RIGHT",C/2,CY,0,.18,CH,C,glassMat);
+
+ for(const x of [-C/2,C/2]){
+  for(const z of [-C/2,C/2]){
+   addVisualBox("CHAMBER FRAME",x,CY,z,.22,CH+.3,.22,metal);
   }
+ }
 
-  // Wall rails and structural columns
-  for(let x=-9;x<=9;x+=3){
-    addVisualBox("WALL COLUMN",x,4,-10.72,.13,7.8,.12,darkMetal);
-    addVisualBox("WALL COLUMN",x,4,10.72,.13,7.8,.12,darkMetal);
+ addVisualBox("CHAMBER TOP",0,5.1,0,C+.3,.22,C+.3,metal);
+
+ // Research benches
+ for(const x of [-35,-20,20,35]){
+  for(const z of [-35,35]){
+   addStaticBox("WORKBENCH",x,1,z,9,.25,3,darkMetal);
+   for(const lx of [-3.8,3.8]){
+    addStaticBox("BENCH LEG",x+lx,.5,z,.25,1,.25,metal);
+   }
   }
+ }
 
-  // Ceiling light strips
-  for(let x=-7;x<=7;x+=7){
-    const lamp=addVisualBox("CEILING LIGHT",x,7.92,0,3.8,.06,.45,
-      new THREE.MeshBasicMaterial({color:0xc9f5ff}));
-    const light=new THREE.PointLight(0x9beaff,22,10,2);
-    light.position.set(x,7.5,0);
-    scene.add(light);
+ // Monitors
+ for(const x of [-35,-20,-5,10,25,40]){
+  addVisualBox("MONITOR",x,2,-35,3,1.8,.15,
+   new THREE.MeshStandardMaterial({
+    color:0x061b2b,emissive:0x087da8,
+    emissiveIntensity:1.3,metalness:.4,roughness:.25
+   })
+  );
+ }
+
+ // Ceiling lights
+ for(let x=-90;x<=90;x+=30){
+  for(let z=-90;z<=90;z+=30){
+   addVisualBox("CEILING LIGHT",x,59,z,8,.12,1,
+    new THREE.MeshBasicMaterial({color:0xc3f4ff})
+   );
+   const light=new THREE.PointLight(0x8edfff,25,35,2);
+   light.position.set(x,55,z);
+   scene.add(light);
   }
+ }
 
-  // Glass containment chamber around the central test area
-  const chamberY=2.1;
-  addStaticBox("GLASS FRONT",0,chamberY,-4.2,7,4.2,.12,glassMat);
-  addStaticBox("GLASS BACK",0,chamberY,4.2,7,4.2,.12,glassMat);
-  addStaticBox("GLASS LEFT",-3.5,chamberY,0,.12,4.2,8.4,glassMat);
-  addStaticBox("GLASS RIGHT",3.5,chamberY,0,.12,4.2,8.4,glassMat);
+ // Large pipes
+ function pipe(a,b,r){
+  const start=new THREE.Vector3(...a);
+  const end=new THREE.Vector3(...b);
+  const d=end.clone().sub(start);
+  const mesh=new THREE.Mesh(
+   new THREE.CylinderGeometry(r,r,d.length(),12),metal
+  );
+  mesh.position.copy(start).add(end).multiplyScalar(.5);
+  mesh.quaternion.setFromUnitVectors(
+   new THREE.Vector3(0,1,0),d.normalize()
+  );
+  scene.add(mesh);
+ }
 
-  // Chamber metal frame
-  for(const x of [-3.55,3.55]){
-    for(const z of [-4.25,4.25]){
-      addVisualBox("CHAMBER FRAME",x,2.1,z,.16,4.4,.16,silver);
-    }
-  }
-  addVisualBox("CHAMBER TOP FRAME",0,4.3,0,7.2,.16,8.6,silver);
-  addVisualBox("CHAMBER BASE FRAME",0,.08,0,7.2,.16,8.6,silver);
+ pipe([-110,52,-110],[110,52,-110],.55);
+ pipe([-110,52,110],[110,52,110],.55);
+ pipe([-110,52,-110],[-110,52,110],.55);
+ pipe([110,52,-110],[110,52,110],.55);
 
-  // Laboratory work benches
-  for(const z of [-8.3,8.3]){
-    addStaticBox("WORK BENCH",0,1.05,z,8,.25,1.2,darkMetal);
-    for(const x of [-3.5,3.5]){
-      addStaticBox("BENCH LEG",x,.5,z,.18,1,.18,silver);
-    }
-  }
-
-  // Monitors
-  for(const x of [-2.5,0,2.5]){
-    const screen=addVisualBox("LAB MONITOR",x,2.15,-8.65,1.65,1,.12,
-      new THREE.MeshStandardMaterial({
-        color:0x061827,emissive:0x087da8,emissiveIntensity:1.2,
-        metalness:.4,roughness:.25
-      }));
-    const stand=addVisualBox("MONITOR STAND",x,1.55,-8.65,.15,.25,.15,silver);
-  }
-
-  // Pipes along the walls
-  function pipe(a,b,r,color=0x5e8294){
-    const start=new THREE.Vector3(...a);
-    const end=new THREE.Vector3(...b);
-    const dir=end.clone().sub(start);
-    const mesh=new THREE.Mesh(
-      new THREE.CylinderGeometry(r,r,dir.length(),12),
-      physicalMaterial(color,.32,.8)
-    );
-    mesh.position.copy(start).add(end).multiplyScalar(.5);
-    mesh.quaternion.setFromUnitVectors(
-      new THREE.Vector3(0,1,0),dir.normalize()
-    );
-    mesh.castShadow=true;
-    scene.add(mesh);
-  }
-  pipe([-10,6,-9],[10,6,-9],.12);
-  pipe([-10,5.5,9],[10,5.5,9],.09);
-  pipe([-9,6,-9],[-9,6,9],.1);
-  pipe([9,6,-9],[9,6,9],.1);
-
-  // Warning stripes around test chamber
-  for(let i=-3;i<=3;i++){
-    addVisualBox("FLOOR WARNING STRIPE",i,.025,-4.65,.42,.018,.08,
-      new THREE.MeshBasicMaterial({color:i%2===0?0xffc247:0x17232b}));
-    addVisualBox("FLOOR WARNING STRIPE",i,.025,4.65,.42,.018,.08,
-      new THREE.MeshBasicMaterial({color:i%2===0?0xffc247:0x17232b}));
-  }
-
-  // Small equipment cabinets
-  for(const x of [-8.8,8.8]){
-    addStaticBox("EQUIPMENT CABINET",x,1.4,0,1.4,2.8,1.3,darkMetal);
-    addVisualBox("CABINET PANEL",x,1.65,x<0?.66:-.66,.8,.9,.025,
-      new THREE.MeshStandardMaterial({
-        color:0x092b3c,emissive:0x087ca0,emissiveIntensity:.7
-      }));
-  }
-
-  // Ambient floor lights
-  for(let x=-9;x<=9;x+=3){
-    const strip=addVisualBox("FLOOR LED",x,.035,-10.45,1.2,.025,.08,glowMat);
-  }
+ // Storage cabinets
+ for(const x of [-90,90]){
+  addStaticBox("STORAGE CABINET",x,4,0,8,8,10,darkMetal);
+ }
 }
 
-buildLaboratory();
-/* =========================================================
-   SOUND SYSTEM
-========================================================= */
+/* =====================================================
+   AUDIO
+===================================================== */
 
 function enableSound(){
-  if(soundEnabled)return;
-  const AudioCtx=window.AudioContext||window.webkitAudioContext;
-  if(!AudioCtx){
-    hintEl.textContent="このブラウザではサウンドを利用できません";
-    return;
-  }
-  audioContext=new AudioCtx();
-  masterGain=audioContext.createGain();
-  masterGain.gain.value=.35;
-  masterGain.connect(audioContext.destination);
-  soundEnabled=true;
-  document.getElementById("soundButton").textContent="🔊 サウンド ON";
-  startAmbientSound();
+ if(soundEnabled)return;
+ const AC=window.AudioContext||window.webkitAudioContext;
+ if(!AC)return;
+ audioContext=new AC();
+ masterGain=audioContext.createGain();
+ masterGain.gain.value=.3;
+ masterGain.connect(audioContext.destination);
+ soundEnabled=true;
+ document.getElementById("sound").textContent="🔊 サウンド ON";
+ startAmbient();
 }
 
-function tone(freq,duration=.12,type="sine",volume=.2,slide=0){
-  if(!soundEnabled||!audioContext)return;
-  const osc=audioContext.createOscillator();
-  const gain=audioContext.createGain();
-  const now=audioContext.currentTime;
-  osc.type=type;
-  osc.frequency.setValueAtTime(freq,now);
-  if(slide)osc.frequency.exponentialRampToValueAtTime(
-    Math.max(20,freq+slide),now+duration
-  );
-  gain.gain.setValueAtTime(volume,now);
-  gain.gain.exponentialRampToValueAtTime(.001,now+duration);
-  osc.connect(gain);
-  gain.connect(masterGain);
-  osc.start(now);
-  osc.stop(now+duration);
+function tone(freq,duration=.15,type="sine",volume=.15,slide=0){
+ if(!soundEnabled)return;
+ const osc=audioContext.createOscillator();
+ const gain=audioContext.createGain();
+ const now=audioContext.currentTime;
+ osc.type=type;
+ osc.frequency.setValueAtTime(freq,now);
+ if(slide)osc.frequency.exponentialRampToValueAtTime(
+  Math.max(20,freq+slide),now+duration
+ );
+ gain.gain.setValueAtTime(volume,now);
+ gain.gain.exponentialRampToValueAtTime(.001,now+duration);
+ osc.connect(gain);
+ gain.connect(masterGain);
+ osc.start(now);
+ osc.stop(now+duration);
 }
 
-function noiseBurst(duration=.18,volume=.15,frequency=700){
-  if(!soundEnabled||!audioContext)return;
-  const length=Math.floor(audioContext.sampleRate*duration);
-  const buffer=audioContext.createBuffer(1,length,audioContext.sampleRate);
-  const data=buffer.getChannelData(0);
-  for(let i=0;i<length;i++){
-    data[i]=(Math.random()*2-1)*(1-i/length);
-  }
-  const source=audioContext.createBufferSource();
-  const filter=audioContext.createBiquadFilter();
-  const gain=audioContext.createGain();
-  source.buffer=buffer;
-  filter.type="lowpass";
-  filter.frequency.value=frequency;
-  gain.gain.value=volume;
-  source.connect(filter);
-  filter.connect(gain);
-  gain.connect(masterGain);
-  source.start();
+function noise(duration=.15,volume=.12){
+ if(!soundEnabled)return;
+ const length=Math.floor(audioContext.sampleRate*duration);
+ const buffer=audioContext.createBuffer(1,length,audioContext.sampleRate);
+ const data=buffer.getChannelData(0);
+ for(let i=0;i<length;i++)data[i]=(Math.random()*2-1)*(1-i/length);
+ const src=audioContext.createBufferSource();
+ const gain=audioContext.createGain();
+ src.buffer=buffer;
+ gain.gain.value=volume;
+ src.connect(gain);
+ gain.connect(masterGain);
+ src.start();
 }
 
 function playSound(type){
-  if(!soundEnabled)return;
-  switch(type){
-    case "pickup":
-      tone(440,.08,"sine",.13,280);
-      tone(760,.12,"sine",.1,180);
-      break;
-    case "pulse":
-      tone(100,.5,"sawtooth",.3,900);
-      tone(55,.65,"sine",.3,450);
-      noiseBurst(.35,.22,1200);
-      break;
-    case "impact":
-      noiseBurst(.12,.12,350);
-      tone(75,.16,"sine",.13,-35);
-      break;
-    case "detach":
-      tone(190,.2,"square",.13,-100);
-      noiseBurst(.15,.1,900);
-      break;
-    case "scan":
-      tone(550,.12,"sine",.12,300);
-      tone(850,.15,"sine",.1,-250);
-      break;
-    case "throw":
-      noiseBurst(.2,.16,1800);
-      tone(160,.18,"sawtooth",.1,500);
-      break;
-    case "alien":
-      tone(95,.55,"sawtooth",.1,-40);
-      tone(210,.4,"sine",.1,-100);
-      break;
-  }
+ if(!soundEnabled)return;
+ if(type==="pulse"){
+  tone(75,.55,"sawtooth",.3,950);
+  tone(45,.7,"sine",.25,500);
+  noise(.35,.2);
+ }else if(type==="detach"){
+  tone(180,.22,"square",.16,-100);
+  noise(.15,.1);
+ }else if(type==="impact"){
+  tone(70,.16,"sine",.13,-30);
+  noise(.1,.1);
+ }else if(type==="scan"){
+  tone(500,.12,"sine",.12,350);
+  tone(850,.16,"sine",.1,-250);
+ }else if(type==="throw"){
+  tone(130,.2,"sawtooth",.13,500);
+  noise(.18,.12);
+ }else if(type==="pickup"){
+  tone(420,.1,"sine",.12,250);
+ }else if(type==="alien"){
+  tone(90,.5,"sawtooth",.08,-30);
+ }
 }
 
-function startAmbientSound(){
-  if(!soundEnabled||!audioContext)return;
-  const osc=audioContext.createOscillator();
-  const gain=audioContext.createGain();
-  const filter=audioContext.createBiquadFilter();
-  osc.type="sawtooth";
-  osc.frequency.value=48;
-  filter.type="lowpass";
-  filter.frequency.value=110;
-  gain.gain.value=.025;
-  osc.connect(filter);
-  filter.connect(gain);
-  gain.connect(masterGain);
-  osc.start();
+function startAmbient(){
+ const osc=audioContext.createOscillator();
+ const gain=audioContext.createGain();
+ const filter=audioContext.createBiquadFilter();
+ osc.type="sawtooth";
+ osc.frequency.value=48;
+ filter.type="lowpass";
+ filter.frequency.value=110;
+ gain.gain.value=.018;
+ osc.connect(filter);
+ filter.connect(gain);
+ gain.connect(masterGain);
+ osc.start();
 }
 
-/* =========================================================
-   PHYSICS OBJECT CREATION
-========================================================= */
+/* =====================================================
+   PHYSICS OBJECTS
+===================================================== */
 
-function createDynamicObject({
-  name="OBJECT",
-  position=new THREE.Vector3(0,3,0),
-  size=new THREE.Vector3(1,1,1),
-  shape="box",
-  color=0x91a8b6,
-  mass=2,
-  metalness=.4,
-  roughness=.4
-}={}){
-  let geometry;
-  let physicsShape;
+function createObject(name,pos,size,shape,color,mass){
+ let geometry,collider;
 
-  if(shape==="sphere"){
-    const radius=size.x;
-    geometry=new THREE.SphereGeometry(radius,24,18);
-    physicsShape=new CANNON.Sphere(radius);
-  }else{
-    geometry=new THREE.BoxGeometry(size.x,size.y,size.z);
-    physicsShape=new CANNON.Box(
-      new CANNON.Vec3(size.x/2,size.y/2,size.z/2)
-    );
-  }
+ if(shape==="sphere"){
+  geometry=new THREE.SphereGeometry(size.x,24,18);
+  collider=new CANNON.Sphere(size.x);
+ }else{
+  geometry=new THREE.BoxGeometry(size.x,size.y,size.z);
+  collider=new CANNON.Box(new CANNON.Vec3(
+   size.x/2,size.y/2,size.z/2
+  ));
+ }
 
-  const mesh=new THREE.Mesh(
-    geometry,
-    physicalMaterial(color,roughness,metalness)
-  );
-  mesh.name=name;
-  mesh.castShadow=true;
-  mesh.receiveShadow=true;
-  mesh.position.copy(position);
-  scene.add(mesh);
+ const mesh=new THREE.Mesh(
+  geometry,new THREE.MeshStandardMaterial({
+   color,roughness:.35,metalness:.65
+  })
+ );
+ mesh.name=name;
+ mesh.position.copy(pos);
+ mesh.castShadow=true;
+ mesh.receiveShadow=true;
+ scene.add(mesh);
 
-  const body=new CANNON.Body({
-    mass,
-    material:matDefault,
-    shape:physicsShape,
-    linearDamping:.08,
-    angularDamping:.12
-  });
-  body.position.set(position.x,position.y,position.z);
-  body.allowSleep=true;
-  body.userData={name,mesh,kind:"object"};
-  world.addBody(body);
+ const body=new CANNON.Body({
+  mass,material:matDefault,shape:collider,
+  linearDamping:.08,angularDamping:.12
+ });
+ body.position.set(pos.x,pos.y,pos.z);
+ body.userData={name,kind:"object"};
+ world.addBody(body);
 
-  const item={body,mesh,name,kind:"object"};
-  physicsObjects.push(item);
-  return item;
+ const item={name,mesh,body,kind:"object"};
+ physicsObjects.push(item);
+ return item;
 }
 
-/* =========================================================
-   ALIEN BODY PARTS
-========================================================= */
+/* =====================================================
+   HUMAN-LIKE ALIEN BODY
+===================================================== */
 
-function makeAlienPart(name,position,geometry,material,shape,mass=1){
-  const group=new THREE.Group();
-  group.name=name;
-  const mesh=new THREE.Mesh(geometry,material);
-  mesh.castShadow=true;
-  mesh.receiveShadow=true;
-  group.add(mesh);
-  group.position.copy(position);
-  scene.add(group);
+function makePart(name,pos,geometry,collider,mass,material=skin){
+ const group=new THREE.Group();
+ group.name=name;
 
-  const body=new CANNON.Body({
-    mass,
-    material:matDefault,
-    shape,
-    linearDamping:.12,
-    angularDamping:.18
-  });
-  body.position.set(position.x,position.y,position.z);
-  body.allowSleep=false;
-  body.userData={name,kind:"alienPart"};
-  world.addBody(body);
+ const mesh=new THREE.Mesh(geometry,material);
+ mesh.castShadow=true;
+ mesh.receiveShadow=true;
+ group.add(mesh);
 
-  const part={
-    name,body,mesh:group,detached:false,
-    originalPosition:position.clone()
-  };
-  alienParts.push(part);
-  return part;
+ group.position.copy(pos);
+ scene.add(group);
+
+ const body=new CANNON.Body({
+  mass,material:matDefault,shape:collider,
+  linearDamping:.12,angularDamping:.18
+ });
+ body.position.set(pos.x,pos.y,pos.z);
+ body.userData={name,kind:"alienPart"};
+ world.addBody(body);
+
+ const part={
+  name,mesh,body,kind:"alienPart",
+  detached:false,originalMass:mass
+ };
+ alienParts.push(part);
+ return part;
 }
 
-function capsulePart(name,position,radius,length,mass=1){
-  const geometry=new THREE.CapsuleGeometry(radius,length,6,12);
-  const shape=new CANNON.Box(
-    new CANNON.Vec3(radius,length/2+radius,radius)
-  );
-  return makeAlienPart(
-    name,position,geometry,alienSkin,shape,mass
-  );
+function makeCapsule(name,pos,radius,length,mass,material=skin){
+ return makePart(
+  name,pos,
+  new THREE.CapsuleGeometry(radius,length,6,14),
+  new CANNON.Box(new CANNON.Vec3(
+   radius,length/2+radius,radius
+  )),
+  mass,material
+ );
 }
 
-function connectParts(partA,partB,jointWorld){
-  const pivotA=new CANNON.Vec3(
-    jointWorld.x-partA.body.position.x,
-    jointWorld.y-partA.body.position.y,
-    jointWorld.z-partA.body.position.z
-  );
-  const pivotB=new CANNON.Vec3(
-    jointWorld.x-partB.body.position.x,
-    jointWorld.y-partB.body.position.y,
-    jointWorld.z-partB.body.position.z
-  );
-
-  const constraint=new CANNON.PointToPointConstraint(
-    partA.body,pivotA,partB.body,pivotB,1800
-  );
-  world.addConstraint(constraint);
-  alienConstraints.push({constraint,a:partA,b:partB});
+function makeSpherePart(name,pos,radius,mass,material=skin){
+ return makePart(
+  name,pos,
+  new THREE.SphereGeometry(radius,24,18),
+  new CANNON.Sphere(radius),
+  mass,material
+ );
 }
 
-const alienSkin=new THREE.MeshStandardMaterial({
-  color:0x9aa6a2,
-  roughness:.48,
-  metalness:.02
-});
-const alienSkinLight=new THREE.MeshStandardMaterial({
-  color:0xb6c1bc,
-  roughness:.38,
-  metalness:.03
-});
-const alienDark=new THREE.MeshStandardMaterial({
-  color:0x111923,
-  roughness:.18,
-  metalness:.15
-});
-const alienEye=new THREE.MeshPhysicalMaterial({
-  color:0x02060a,
-  roughness:.08,
-  metalness:.12,
-  clearcoat:1,
-  clearcoatRoughness:.04
-});
-const alienIris=new THREE.MeshBasicMaterial({color:0x163a4a});
-const alienMouth=new THREE.MeshStandardMaterial({
-  color:0x303c3d,roughness:.8
-});
-
-function addFaceSphere(parent,name,pos,scale,material){
-  const mesh=new THREE.Mesh(
-    new THREE.SphereGeometry(1,24,18),material
-  );
-  mesh.name=name;
-  mesh.position.set(pos.x,pos.y,pos.z);
-  mesh.scale.set(scale.x,scale.y,scale.z);
-  mesh.castShadow=true;
-  parent.add(mesh);
-  return mesh;
+function makeBoxPart(name,pos,size,mass,material=skin){
+ return makePart(
+  name,pos,
+  new THREE.BoxGeometry(size.x,size.y,size.z),
+  new CANNON.Box(new CANNON.Vec3(
+   size.x/2,size.y/2,size.z/2
+  )),
+  mass,material
+ );
 }
 
-function buildAlienFace(headGroup){
-  // Forehead and cheek contours
-  addFaceSphere(headGroup,"FOREHEAD",
-    new THREE.Vector3(0,.32,.04),
-    new THREE.Vector3(.68,.52,.48),alienSkinLight);
+function addJoint(a,b,worldPoint){
+ const pa=new CANNON.Vec3(
+  worldPoint.x-a.body.position.x,
+  worldPoint.y-a.body.position.y,
+  worldPoint.z-a.body.position.z
+ );
+ const pb=new CANNON.Vec3(
+  worldPoint.x-b.body.position.x,
+  worldPoint.y-b.body.position.y,
+  worldPoint.z-b.body.position.z
+ );
 
-  addFaceSphere(headGroup,"LEFT CHEEK",
-    new THREE.Vector3(-.38,-.22,.31),
-    new THREE.Vector3(.3,.26,.28),alienSkin);
-  addFaceSphere(headGroup,"RIGHT CHEEK",
-    new THREE.Vector3(.38,-.22,.31),
-    new THREE.Vector3(.3,.26,.28),alienSkin);
-
-  // Large glossy grey-alien eyes
-  for(const side of [-1,1]){
-    const eye=addFaceSphere(headGroup,"BLACK EYE",
-      new THREE.Vector3(side*.34,.08,.49),
-      new THREE.Vector3(.285,.39,.15),alienEye);
-    eye.rotation.z=side*-.18;
-
-    addFaceSphere(headGroup,"EYE REFLECTION",
-      new THREE.Vector3(side*.34-.07,.22,.625),
-      new THREE.Vector3(.055,.075,.018),
-      new THREE.MeshBasicMaterial({color:0xc7f5ff}));
-
-    // Outer eye ridge
-    const brow=addFaceSphere(headGroup,"EYE RIDGE",
-      new THREE.Vector3(side*.34,.43,.37),
-      new THREE.Vector3(.32,.09,.12),alienSkin);
-    brow.rotation.z=side*.13;
-  }
-
-  // Nose bridge and small nostrils
-  addFaceSphere(headGroup,"NOSE BRIDGE",
-    new THREE.Vector3(0,-.12,.49),
-    new THREE.Vector3(.105,.23,.13),alienSkinLight);
-  addFaceSphere(headGroup,"NOSE TIP",
-    new THREE.Vector3(0,-.29,.52),
-    new THREE.Vector3(.13,.085,.12),alienSkin);
-
-  for(const side of [-1,1]){
-    addFaceSphere(headGroup,"NOSTRIL",
-      new THREE.Vector3(side*.075,-.32,.615),
-      new THREE.Vector3(.025,.018,.012),alienDark);
-  }
-
-  // Mouth
-  const mouth=addFaceSphere(headGroup,"MOUTH",
-    new THREE.Vector3(0,-.48,.45),
-    new THREE.Vector3(.19,.045,.035),alienMouth);
-  mouth.rotation.z=0;
-
-  // Ears
-  for(const side of [-1,1]){
-    const ear=addFaceSphere(headGroup,"EAR",
-      new THREE.Vector3(side*.68,-.02,.02),
-      new THREE.Vector3(.12,.22,.12),alienSkin);
-    ear.rotation.z=side*-.12;
-
-    addFaceSphere(headGroup,"EAR INNER",
-      new THREE.Vector3(side*.70,-.02,.11),
-      new THREE.Vector3(.045,.11,.025),alienMouth);
-  }
-
-  // Chin
-  addFaceSphere(headGroup,"CHIN",
-    new THREE.Vector3(0,-.58,.28),
-    new THREE.Vector3(.23,.12,.18),alienSkin);
+ const constraint=new CANNON.PointToPointConstraint(
+  a.body,pa,b.body,pb,1200
+ );
+ world.addConstraint(constraint);
+ alienConstraints.push({constraint,a,b});
 }
 
-/* =========================================================
-   CREATE FULL HUMANOID GREY ALIEN
-========================================================= */
-
-function createAlien(){
-  clearAlien();
-
-  const parts={};
-
-  // Main body
-  parts.pelvis=makeAlienPart(
-    "PELVIS",new THREE.Vector3(0,1.15,0),
-    new THREE.SphereGeometry(.43,24,18),
-    alienSkin,
-    new CANNON.Box(new CANNON.Vec3(.34,.25,.24)),3
-  );
-
-  parts.torso=makeAlienPart(
-    "TORSO",new THREE.Vector3(0,2.05,0),
-    new THREE.CapsuleGeometry(.48,.75,8,18),
-    alienSkinLight,
-    new CANNON.Box(new CANNON.Vec3(.43,.75,.3)),5
-  );
-
-  parts.head=makeAlienPart(
-    "HEAD",new THREE.Vector3(0,3.35,0),
-    new THREE.SphereGeometry(.72,32,24),
-    alienSkinLight,
-    new CANNON.Sphere(.65),2
-  );
-  buildAlienFace(parts.head.mesh);
-
-  // Neck
-  parts.neck=capsulePart(
-    "NECK",new THREE.Vector3(0,2.85,0),.19,.35,.6
-  );
-
-  // Arms
-  for(const side of [-1,1]){
-    const label=side<0?"LEFT":"RIGHT";
-    const shoulderX=side*.62;
-
-    parts[label+"_UPPER_ARM"]=capsulePart(
-      label+" UPPER ARM",
-      new THREE.Vector3(side*.78,2.15,0),.19,.62,1
-    );
-    parts[label+"_LOWER_ARM"]=capsulePart(
-      label+" LOWER ARM",
-      new THREE.Vector3(side*1.02,1.48,0),.145,.58,.8
-    );
-    parts[label+"_HAND"]=makeAlienPart(
-      label+" HAND",
-      new THREE.Vector3(side*1.05,1.02,.02),
-      new THREE.SphereGeometry(.19,16,12),
-      alienSkin,
-      new CANNON.Sphere(.17),.45
-    );
-
-    // Fingers as visual details on hand
-    for(let i=0;i<4;i++){
-      const finger=new THREE.Mesh(
-        new THREE.CapsuleGeometry(.035,.16,3,7),alienSkinLight
-      );
-      finger.position.set(
-        side*.025+(i-1.5)*.075,-.16,.08
-      );
-      parts[label+"_HAND"].mesh.add(finger);
-    }
-
-    // Legs
-    parts[label+"_THIGH"]=capsulePart(
-      label+" THIGH",
-      new THREE.Vector3(side*.25,.63,0),.23,.55,1.6
-    );
-    parts[label+"_SHIN"]=capsulePart(
-      label+" SHIN",
-      new THREE.Vector3(side*.25,.18,0),.16,.42,1.1
-    );
-    parts[label+"_FOOT"]=makeAlienPart(
-      label+" FOOT",
-      new THREE.Vector3(side*.25,.08,.18),
-      new THREE.BoxGeometry(.32,.15,.52),
-      alienSkin,
-      new CANNON.Box(new CANNON.Vec3(.16,.075,.26)),.6
-    );
-  }
-
-  // Connect skeleton joints
-  connectParts(parts.pelvis,parts.torso,new THREE.Vector3(0,1.55,0));
-  connectParts(parts.torso,parts.neck,new THREE.Vector3(0,2.72,0));
-  connectParts(parts.neck,parts.head,new THREE.Vector3(0,3.05,0));
-
-  for(const side of [-1,1]){
-    const label=side<0?"LEFT":"RIGHT";
-
-    connectParts(parts.torso,parts[label+"_UPPER_ARM"],
-      new THREE.Vector3(side*.48,2.42,0));
-    connectParts(parts[label+"_UPPER_ARM"],parts[label+"_LOWER_ARM"],
-      new THREE.Vector3(side*.91,1.82,0));
-    connectParts(parts[label+"_LOWER_ARM"],parts[label+"_HAND"],
-      new THREE.Vector3(side*1.04,1.2,0));
-
-    connectParts(parts.pelvis,parts[label+"_THIGH"],
-      new THREE.Vector3(side*.23,.95,0));
-    connectParts(parts[label+"_THIGH"],parts[label+"_SHIN"],
-      new THREE.Vector3(side*.25,.39,0));
-    connectParts(parts[label+"_SHIN"],parts[label+"_FOOT"],
-      new THREE.Vector3(side*.25,.12,.06));
-  }
-
-  playSound("alien");
-  statusEl.textContent="ALIEN CREATED";
-  hintEl.textContent="エイリアンをつかんで動かせるよ";
+function faceDetail(parent,name,pos,scale,material){
+ const mesh=new THREE.Mesh(
+  new THREE.SphereGeometry(1,20,16),material
+ );
+ mesh.name=name;
+ mesh.position.set(pos.x,pos.y,pos.z);
+ mesh.scale.set(scale.x,scale.y,scale.z);
+ mesh.castShadow=true;
+ parent.mesh.add(mesh);
+ return mesh;
 }
+
+function buildFace(head){
+ // Human-like face contours, retaining grey-alien eyes
+ faceDetail(head,"FOREHEAD",
+  new THREE.Vector3(0,.25,.03),
+  new THREE.Vector3(.39,.31,.33),skinLight);
+
+ faceDetail(head,"LEFT CHEEK",
+  new THREE.Vector3(-.23,-.12,.23),
+  new THREE.Vector3(.19,.16,.16),skin);
+ faceDetail(head,"RIGHT CHEEK",
+  new THREE.Vector3(.23,-.12,.23),
+  new THREE.Vector3(.19,.16,.16),skin);
+
+ for(const s of [-1,1]){
+  const eye=faceDetail(head,"EYE",
+   new THREE.Vector3(s*.205,.055,.32),
+   new THREE.Vector3(.14,.205,.09),eyeMat);
+  eye.rotation.z=-s*.12;
+
+  faceDetail(head,"EYE REFLECTION",
+   new THREE.Vector3(s*.205-.035,.13,.405),
+   new THREE.Vector3(.025,.035,.012),
+   new THREE.MeshBasicMaterial({color:0xd7f7ff}));
+
+  faceDetail(head,"EAR",
+   new THREE.Vector3(s*.39,-.015,0),
+   new THREE.Vector3(.075,.14,.09),skin);
+ }
+
+ faceDetail(head,"NOSE BRIDGE",
+  new THREE.Vector3(0,-.08,.32),
+  new THREE.Vector3(.07,.17,.09),skinLight);
+
+ faceDetail(head,"NOSE TIP",
+  new THREE.Vector3(0,-.19,.35),
+  new THREE.Vector3(.085,.055,.08),skin);
+
+ for(const s of [-1,1]){
+  faceDetail(head,"NOSTRIL",
+   new THREE.Vector3(s*.045,-.21,.425),
+   new THREE.Vector3(.014,.012,.01),skinDark);
+ }
+
+ faceDetail(head,"MOUTH",
+  new THREE.Vector3(0,-.29,.30),
+  new THREE.Vector3(.105,.025,.025),mouthMat);
+
+ faceDetail(head,"CHIN",
+  new THREE.Vector3(0,-.36,.20),
+  new THREE.Vector3(.15,.075,.12),skin);
+}
+
+/* =====================================================
+   BUILD FULL HUMAN PROPORTION SKELETON
+===================================================== */
 
 function clearAlien(){
-  for(const item of alienConstraints){
-    world.removeConstraint(item.constraint);
-  }
-  alienConstraints=[];
+ if(grabbedBody)endGrab();
 
-  for(const part of alienParts){
-    world.removeBody(part.body);
-    scene.remove(part.mesh);
-    part.mesh.traverse(obj=>{
-      if(obj.geometry)obj.geometry.dispose();
-    });
-  }
-  alienParts=[];
-  selected=null;
-  grabbedBody=null;
-}
+ for(const item of alienConstraints){
+  world.removeConstraint(item.constraint);
+ }
+ alienConstraints.length=0;
 
-/* =========================================================
-   SANDBOX OBJECTS
-========================================================= */
-
-function addBox(){
-  const obj=createDynamicObject({
-    name:"METAL CRATE",
-    position:new THREE.Vector3(
-      (Math.random()-.5)*3,4.5,(Math.random()-.5)*3
-    ),
-    size:new THREE.Vector3(1,1,1),
-    color:0x657d8d,mass:3
+ for(const part of alienParts){
+  world.removeBody(part.body);
+  scene.remove(part.mesh);
+  part.mesh.traverse(obj=>{
+   if(obj.geometry)obj.geometry.dispose();
   });
-  playSound("pickup");
-  return obj;
+ }
+ alienParts.length=0;
+ selected=null;
 }
 
-function addBall(){
-  const obj=createDynamicObject({
-    name:"HEAVY METAL SPHERE",
-    position:new THREE.Vector3(
-      (Math.random()-.5)*3,4.5,(Math.random()-.5)*3
-    ),
-    size:new THREE.Vector3(.48,.48,.48),
-    shape:"sphere",
-    color:0x9fb9c6,mass:5,
-    metalness:.85,roughness:.18
-  });
-  playSound("pickup");
-  return obj;
+function createAlien(){
+ clearAlien();
+
+ const P={};
+
+ // Human proportions: total height approximately 5.1 units
+ // Pelvis
+ P.pelvis=makeSpherePart(
+  "PELVIS",new THREE.Vector3(0,1.05,0),.32,3,skin
+ );
+
+ // Abdomen
+ P.abdomen=makeCapsule(
+  "ABDOMEN",new THREE.Vector3(0,1.48,0),.27,.35,2,skin
+ );
+
+ // Chest
+ P.chest=makeCapsule(
+  "CHEST",new THREE.Vector3(0,2.12,0),.39,.55,4,skinLight
+ );
+
+ // Neck
+ P.neck=makeCapsule(
+  "NECK",new THREE.Vector3(0,2.72,0),.13,.18,.7,skin
+ );
+
+ // Head
+ P.head=makeSpherePart(
+  "HEAD",new THREE.Vector3(0,3.27,0),.34,1.5,skinLight
+ );
+ buildFace(P.head);
+
+ // Shoulders, arms, hands, fingers
+ for(const s of [-1,1]){
+  const side=s<0?"LEFT":"RIGHT";
+
+  P[side+"_SHOULDER"]=makeSpherePart(
+   side+" SHOULDER",
+   new THREE.Vector3(s*.48,2.42,0),.19,.8,skin
+  );
+
+  P[side+"_UPPER_ARM"]=makeCapsule(
+   side+" UPPER ARM",
+   new THREE.Vector3(s*.57,1.99,0),.135,.42,1.2,skin
+  );
+
+  P[side+"_ELBOW"]=makeSpherePart(
+   side+" ELBOW",
+   new THREE.Vector3(s*.57,1.69,0),.12,.5,skin
+  );
+
+  P[side+"_FOREARM"]=makeCapsule(
+   side+" FOREARM",
+   new THREE.Vector3(s*.57,1.36,0),.105,.38,.8,skin
+  );
+
+  P[side+"_HAND"]=makeBoxPart(
+   side+" HAND",
+   new THREE.Vector3(s*.57,1.05,.015),
+   new THREE.Vector3(.19,.24,.09),.45,skinLight
+  );
+
+  // Four fingers and thumb are attached to the hand
+  for(let i=0;i<4;i++){
+   const finger=new THREE.Mesh(
+    new THREE.CapsuleGeometry(.025,.12,3,7),skinLight
+   );
+   finger.position.set(
+    (i-1.5)*.047,-.17,.015
+   );
+   P[side+"_HAND"].mesh.add(finger);
+  }
+
+  const thumb=new THREE.Mesh(
+   new THREE.CapsuleGeometry(.03,.09,3,7),skinLight
+  );
+  thumb.position.set(s*.12,-.07,.025);
+  thumb.rotation.z=s*.7;
+  P[side+"_HAND"].mesh.add(thumb);
+
+  // Thighs
+  P[side+"_THIGH"]=makeCapsule(
+   side+" THIGH",
+   new THREE.Vector3(s*.19,.69,0),.17,.43,1.8,skin
+  );
+
+  P[side+"_KNEE"]=makeSpherePart(
+   side+" KNEE",
+   new THREE.Vector3(s*.19,.39,0),.13,.5,skin
+  );
+
+  P[side+"_CALF"]=makeCapsule(
+   side+" CALF",
+   new THREE.Vector3(s*.19,.16,0),.115,.25,1.1,skin
+  );
+
+  P[side+"_FOOT"]=makeBoxPart(
+   side+" FOOT",
+   new THREE.Vector3(s*.19,.055,.13),
+   new THREE.Vector3(.22,.12,.38),.65,skinLight
+  );
+ }
+
+ // Central torso joints
+ addJoint(P.pelvis,P.abdomen,new THREE.Vector3(0,1.25,0));
+ addJoint(P.abdomen,P.chest,new THREE.Vector3(0,1.78,0));
+ addJoint(P.chest,P.neck,new THREE.Vector3(0,2.58,0));
+ addJoint(P.neck,P.head,new THREE.Vector3(0,2.94,0));
+
+ // Arm joints
+ for(const s of [-1,1]){
+  const side=s<0?"LEFT":"RIGHT";
+
+  addJoint(P.chest,P[side+"_SHOULDER"],
+   new THREE.Vector3(s*.42,2.38,0));
+
+  addJoint(P[side+"_SHOULDER"],P[side+"_UPPER_ARM"],
+   new THREE.Vector3(s*.57,2.2,0));
+
+  addJoint(P[side+"_UPPER_ARM"],P[side+"_ELBOW"],
+   new THREE.Vector3(s*.57,1.75,0));
+
+  addJoint(P[side+"_ELBOW"],P[side+"_FOREARM"],
+   new THREE.Vector3(s*.57,1.55,0));
+
+  addJoint(P[side+"_FOREARM"],P[side+"_HAND"],
+   new THREE.Vector3(s*.57,1.18,0));
+
+  // Leg joints
+  addJoint(P.pelvis,P[side+"_THIGH"],
+   new THREE.Vector3(s*.19,.92,0));
+
+  addJoint(P[side+"_THIGH"],P[side+"_KNEE"],
+   new THREE.Vector3(s*.19,.43,0));
+
+  addJoint(P[side+"_KNEE"],P[side+"_CALF"],
+   new THREE.Vector3(s*.19,.29,0));
+
+  addJoint(P[side+"_CALF"],P[side+"_FOOT"],
+   new THREE.Vector3(s*.19,.09,.05));
+ }
+
+ playSound("alien");
+ statusEl.textContent="HUMANOID ALIEN CREATED";
+ hintEl.textContent="人型エイリアンを作成しました";
 }
-/* =========================================================
-   SELECTION AND RAYCAST
-========================================================= */
+
+/* =====================================================
+   RELIABLE DETACH SYSTEM
+===================================================== */
+
+function detachPart(part){
+ if(!part||part.kind!=="alienPart"){
+  hintEl.textContent="エイリアンのパーツを選択してね";
+  return;
+ }
+
+ if(part.detached){
+  hintEl.textContent="このパーツはすでに分離されています";
+  return;
+ }
+
+ // Remove every joint connected to this part
+ for(let i=alienConstraints.length-1;i>=0;i--){
+  const joint=alienConstraints[i];
+
+  if(joint.a===part||joint.b===part){
+   world.removeConstraint(joint.constraint);
+   alienConstraints.splice(i,1);
+  }
+ }
+
+ // The part remains a separate physical body
+ part.detached=true;
+ part.body.type=CANNON.Body.DYNAMIC;
+ part.body.mass=part.originalMass;
+ part.body.updateMassProperties();
+ part.body.wakeUp();
+
+ // Small separation impulse
+ part.body.applyImpulse(
+  new CANNON.Vec3(
+   (Math.random()-.5)*2,
+   1.8,
+   (Math.random()-.5)*2
+  ),
+  part.body.position
+ );
+
+ playSound("detach");
+ statusEl.textContent="PART DETACHED: "+part.name;
+ hintEl.textContent=part.name+" を分離しました";
+}
+
+/* =====================================================
+   TARGET DETECTION
+===================================================== */
 
 function updatePointer(event){
-  const rect=renderer.domElement.getBoundingClientRect();
-  pointer.x=((event.clientX-rect.left)/rect.width)*2-1;
-  pointer.y=-((event.clientY-rect.top)/rect.height)*2+1;
+ const rect=renderer.domElement.getBoundingClientRect();
+ pointer.x=((event.clientX-rect.left)/rect.width)*2-1;
+ pointer.y=-((event.clientY-rect.top)/rect.height)*2+1;
 }
 
-function getTargetFromHit(hitObject){
-  let current=hitObject;
+function findTarget(object){
+ let current=object;
 
-  while(current&&current!==scene){
-    const alien=alienParts.find(p=>p.mesh===current);
-    if(alien)return alien;
+ while(current&&current!==scene){
+  const alien=alienParts.find(p=>p.mesh===current);
+  if(alien)return alien;
 
-    const object=physicsObjects.find(p=>p.mesh===current);
-    if(object)return object;
+  const prop=physicsObjects.find(p=>p.mesh===current);
+  if(prop)return prop;
 
-    current=current.parent;
-  }
-  return null;
+  current=current.parent;
+ }
+
+ return null;
 }
 
-function getHitTarget(){
-  raycaster.setFromCamera(pointer,camera);
+function getHit(){
+ raycaster.setFromCamera(pointer,camera);
 
-  const meshes=[];
-  for(const part of alienParts){
-    if(!part.detached||part.body){
-      meshes.push(part.mesh);
-    }
-  }
-  for(const item of physicsObjects){
-    meshes.push(item.mesh);
-  }
+ const meshes=[
+  ...alienParts.map(p=>p.mesh),
+  ...physicsObjects.map(p=>p.mesh)
+ ];
 
-  const hits=raycaster.intersectObjects(meshes,true);
-  if(!hits.length)return null;
+ const hits=raycaster.intersectObjects(meshes,true);
+ if(!hits.length)return null;
 
-  const target=getTargetFromHit(hits[0].object);
-  if(!target)return null;
+ const target=findTarget(hits[0].object);
+ if(!target)return null;
 
-  return {
-    target,
-    point:hits[0].point.clone(),
-    distance:hits[0].distance
-  };
+ return {target,point:hits[0].point.clone()};
 }
 
-function setStatus(message){
-  statusEl.textContent=message;
-}
-
-/* =========================================================
-   GRAB / MOVE
-========================================================= */
+/* =====================================================
+   PHYSICS GRAB
+===================================================== */
 
 function beginGrab(target,point){
-  if(!target||!target.body)return;
+ if(!target||!target.body)return;
 
-  selected=target;
-  grabbedBody=target.body;
-  grabbedBody.wakeUp();
+ selected=target;
+ grabbedBody=target.body;
+ grabbedBody.wakeUp();
 
-  grabbedBody.userData.originalMass=grabbedBody.mass;
-  grabbedBody.userData.originalType=grabbedBody.type;
+ grabDistance=camera.position.distanceTo(point);
 
-  grabPlane.setFromNormalAndCoplanarPoint(
-    camera.getWorldDirection(new THREE.Vector3()),
-    point
-  );
+ grabAnchor=new CANNON.Body({
+  mass:0,
+  type:CANNON.Body.KINEMATIC,
+  shape:new CANNON.Sphere(.12),
+  collisionFilterGroup:0,
+  collisionFilterMask:0
+ });
+ grabAnchor.position.set(point.x,point.y,point.z);
+ world.addBody(grabAnchor);
 
-  const intersection=new THREE.Vector3();
-  raycaster.ray.intersectPlane(grabPlane,intersection);
-  grabOffset.set(
-    grabbedBody.position.x-intersection.x,
-    grabbedBody.position.y-intersection.y,
-    grabbedBody.position.z-intersection.z
-  );
+ const pivot=new CANNON.Vec3(
+  point.x-grabbedBody.position.x,
+  point.y-grabbedBody.position.y,
+  point.z-grabbedBody.position.z
+ );
 
-  grabbedBody.type=CANNON.Body.KINEMATIC;
-  grabbedBody.updateMassProperties();
-  grabbedBody.velocity.setZero();
-  grabbedBody.angularVelocity.setZero();
+ grabConstraint=new CANNON.PointToPointConstraint(
+  grabbedBody,pivot,grabAnchor,
+  new CANNON.Vec3(0,0,0),1000
+ );
+ world.addConstraint(grabConstraint);
 
-  controls.enabled=false;
-  setStatus("GRABBING: "+target.name);
+ controls.enabled=false;
+ statusEl.textContent="GRABBING: "+target.name;
 }
 
 function moveGrabbed(){
-  if(!grabbedBody)return;
+ if(!grabbedBody||!grabAnchor)return;
 
-  raycaster.setFromCamera(pointer,camera);
-  const intersection=new THREE.Vector3();
+ raycaster.setFromCamera(pointer,camera);
+ const p=camera.position.clone().add(
+  raycaster.ray.direction.clone().multiplyScalar(grabDistance)
+ );
 
-  if(raycaster.ray.intersectPlane(grabPlane,intersection)){
-    const p=intersection.add(grabOffset);
-    grabbedBody.position.set(p.x,p.y,p.z);
-    grabbedBody.velocity.setZero();
-    grabbedBody.angularVelocity.setZero();
-  }
+ grabAnchor.position.set(p.x,p.y,p.z);
+ grabAnchor.velocity.setZero();
+ grabAnchor.angularVelocity.setZero();
+ grabAnchor.wakeUp();
 }
 
 function endGrab(){
-  if(!grabbedBody)return;
+ if(!grabbedBody)return;
 
-  const body=grabbedBody;
-  const originalMass=body.userData.originalMass||1;
+ if(grabConstraint){
+  world.removeConstraint(grabConstraint);
+  grabConstraint=null;
+ }
 
-  body.type=CANNON.Body.DYNAMIC;
-  body.mass=originalMass;
-  body.updateMassProperties();
-  body.wakeUp();
+ if(grabAnchor){
+  world.removeBody(grabAnchor);
+  grabAnchor=null;
+ }
 
-  grabbedBody=null;
-  controls.enabled=true;
-  setStatus("OBJECT RELEASED");
+ grabbedBody.wakeUp();
+ grabbedBody=null;
+ controls.enabled=true;
+ statusEl.textContent="OBJECT RELEASED";
 }
 
-/* =========================================================
-   ALIEN PART DETACHMENT
-========================================================= */
-
-function detachPart(target){
-  if(!target||!target.body||target.kind!=="alienPart"){
-    hintEl.textContent="エイリアンのパーツを選択してね";
-    return;
-  }
-
-  if(target.detached){
-    hintEl.textContent="このパーツはすでに分離されています";
-    return;
-  }
-
-  for(let i=alienConstraints.length-1;i>=0;i--){
-    const item=alienConstraints[i];
-    if(item.a===target||item.b===target){
-      world.removeConstraint(item.constraint);
-      alienConstraints.splice(i,1);
-    }
-  }
-
-  target.detached=true;
-  target.body.wakeUp();
-  target.body.velocity.set(
-    (Math.random()-.5)*2,
-    1.5,
-    (Math.random()-.5)*2
-  );
-
-  playSound("detach");
-  setStatus("PART DETACHED: "+target.name);
-  hintEl.textContent=target.name+" を分離した";
-}
-
-/* =========================================================
-   POWERFUL ENERGY PULSE
-========================================================= */
-
-function createPulseVisual(position){
-  const ring=new THREE.Mesh(
-    new THREE.TorusGeometry(.35,.055,8,48),
-    new THREE.MeshBasicMaterial({
-      color:0x47eaff,
-      transparent:true,
-      opacity:.95
-    })
-  );
-  ring.position.copy(position);
-  ring.rotation.x=Math.PI/2;
-  scene.add(ring);
-
-  pulseEffects.push({
-    mesh:ring,
-    age:0,
-    duration:.75
-  });
-
-  const flash=new THREE.PointLight(0x27cfff,30,12,2);
-  flash.position.copy(position);
-  scene.add(flash);
-
-  pulseEffects.push({
-    mesh:flash,
-    age:0,
-    duration:.3,
-    light:true
-  });
-}
+/* =====================================================
+   ENERGY PULSE
+===================================================== */
 
 function energyPulse(point){
-  const center=point||new THREE.Vector3(0,2,0);
-  const radius=9;
-  const strength=75;
+ const center=point||new THREE.Vector3(0,2,0);
 
-  createPulseVisual(center);
-  playSound("pulse");
+ const ring=new THREE.Mesh(
+  new THREE.TorusGeometry(.3,.06,8,48),
+  new THREE.MeshBasicMaterial({
+   color:0x4beaff,transparent:true,opacity:1
+  })
+ );
+ ring.position.copy(center);
+ ring.rotation.x=Math.PI/2;
+ scene.add(ring);
+ pulseEffects.push({mesh:ring,age:0,duration:.8});
 
-  const allBodies=[
-    ...alienParts.map(p=>p.body),
-    ...physicsObjects.map(p=>p.body)
-  ];
+ const light=new THREE.PointLight(0x21cfff,35,18,2);
+ light.position.copy(center);
+ scene.add(light);
+ pulseEffects.push({mesh:light,age:0,duration:.3,light:true});
 
-  for(const body of allBodies){
-    if(body.type!==CANNON.Body.DYNAMIC)continue;
+ const bodies=[
+  ...alienParts.map(p=>p.body),
+  ...physicsObjects.map(p=>p.body)
+ ];
 
-    const dx=body.position.x-center.x;
-    const dy=body.position.y-center.y;
-    const dz=body.position.z-center.z;
-    const distance=Math.sqrt(dx*dx+dy*dy+dz*dz);
+ for(const body of bodies){
+  if(body.type!==CANNON.Body.DYNAMIC)continue;
 
-    if(distance>radius||distance<.001)continue;
+  const dx=body.position.x-center.x;
+  const dy=body.position.y-center.y;
+  const dz=body.position.z-center.z;
+  const distance=Math.sqrt(dx*dx+dy*dy+dz*dz);
 
-    const falloff=1-distance/radius;
-    const direction=new CANNON.Vec3(
-      dx/distance,
-      dy/distance+.25,
-      dz/distance
-    );
-    const impulse=direction.scale(strength*falloff*body.mass*.7);
+  if(distance>13||distance<.001)continue;
 
-    body.applyImpulse(impulse,body.position);
-    body.wakeUp();
-  }
+  const falloff=1-distance/13;
+  const direction=new CANNON.Vec3(
+   dx/distance,dy/distance+.25,dz/distance
+  );
 
-  setStatus("ENERGY PULSE: MAXIMUM");
-  hintEl.textContent="エネルギーパルス発射！";
+  body.applyImpulse(
+   direction.scale(65*falloff*body.mass),
+   body.position
+  );
+  body.wakeUp();
+ }
+
+ playSound("pulse");
+ statusEl.textContent="ENERGY PULSE: MAXIMUM";
 }
 
-/* =========================================================
+/* =====================================================
    THROW
-========================================================= */
+===================================================== */
 
 function throwTarget(target){
-  if(!target||!target.body)return;
+ if(!target||!target.body)return;
 
-  if(target.kind==="alienPart"&&!target.detached){
-    detachPart(target);
-  }
+ if(target.kind==="alienPart"&&!target.detached){
+  detachPart(target);
+ }
 
-  const body=target.body;
-  body.type=CANNON.Body.DYNAMIC;
-  body.mass=body.userData.originalMass||body.mass||1;
-  body.updateMassProperties();
+ const body=target.body;
+ body.type=CANNON.Body.DYNAMIC;
+ body.mass=target.originalMass||body.mass||1;
+ body.updateMassProperties();
 
-  const direction=new THREE.Vector3();
-  camera.getWorldDirection(direction);
+ const direction=new THREE.Vector3();
+ camera.getWorldDirection(direction);
 
-  const impulse=new CANNON.Vec3(
-    direction.x*body.mass*34,
-    direction.y*body.mass*34,
-    direction.z*body.mass*34
-  );
+ body.applyImpulse(
+  new CANNON.Vec3(
+   direction.x*body.mass*30,
+   direction.y*body.mass*30,
+   direction.z*body.mass*30
+  ),
+  body.position
+ );
+ body.wakeUp();
 
-  body.applyImpulse(impulse,body.position);
-  body.wakeUp();
-
-  playSound("throw");
-  setStatus("THROWN: "+target.name);
+ playSound("throw");
+ statusEl.textContent="OBJECT THROWN";
 }
 
-/* =========================================================
+/* =====================================================
    SCAN
-========================================================= */
+===================================================== */
 
 function scanTarget(target,point){
-  if(!target){
-    hintEl.textContent="スキャンする物体を選択してね";
-    return;
-  }
+ if(!target)return;
 
-  const body=target.body;
-  const mass=body.mass.toFixed(2);
-  const speed=body.velocity.length().toFixed(2);
+ const body=target.body;
+ const ring=new THREE.Mesh(
+  new THREE.TorusGeometry(.65,.025,8,40),
+  new THREE.MeshBasicMaterial({
+   color:0x45eaff,transparent:true,opacity:1
+  })
+ );
+ ring.position.copy(point);
+ scene.add(ring);
+ scanEffects.push({mesh:ring,age:0});
 
-  const ring=new THREE.Mesh(
-    new THREE.TorusGeometry(.65,.025,8,40),
-    new THREE.MeshBasicMaterial({
-      color:0x40eaff,
-      transparent:true,
-      opacity:.9
-    })
-  );
-  ring.position.copy(point||target.mesh.position);
-  scene.add(ring);
+ hintEl.textContent=
+  target.name+
+  " / MASS "+body.mass.toFixed(2)+
+  " / SPEED "+body.velocity.length().toFixed(2);
 
-  scanEffects.push({mesh:ring,age:0});
-
-  hintEl.textContent=
-    target.name+" / 質量 "+mass+" / 速度 "+speed;
-
-  playSound("scan");
-  setStatus("SCANNING: "+target.name);
+ playSound("scan");
+ statusEl.textContent="SCANNING";
 }
 
-/* =========================================================
-   TOOL ACTION
-========================================================= */
+/* =====================================================
+   TOOL ROUTER
+===================================================== */
 
 function useTool(hit){
-  if(!hit){
-    if(currentTool==="pulse"){
-      const direction=new THREE.Vector3();
-      camera.getWorldDirection(direction);
-      const point=camera.position.clone().add(direction.multiplyScalar(5));
-      energyPulse(point);
-    }
-    return;
+ if(!hit){
+  if(currentTool==="pulse"){
+   const dir=new THREE.Vector3();
+   camera.getWorldDirection(dir);
+   energyPulse(camera.position.clone().add(dir.multiplyScalar(6)));
   }
+  return;
+ }
 
-  const target=hit.target;
-  selected=target;
+ const target=hit.target;
+ selected=target;
 
-  switch(currentTool){
-    case "grab":
-      beginGrab(target,hit.point);
-      break;
-
-    case "pulse":
-      energyPulse(hit.point);
-      break;
-
-    case "detach":
-      detachPart(target);
-      break;
-
-    case "scan":
-      scanTarget(target,hit.point);
-      break;
-
-    case "throw":
-      throwTarget(target);
-      break;
-  }
+ if(currentTool==="grab")beginGrab(target,hit.point);
+ if(currentTool==="pulse")energyPulse(hit.point);
+ if(currentTool==="detach")detachPart(target);
+ if(currentTool==="scan")scanTarget(target,hit.point);
+ if(currentTool==="throw")throwTarget(target);
 }
 
-/* =========================================================
-   POINTER INPUT - PC AND MOBILE
-========================================================= */
+/* =====================================================
+   INPUT
+===================================================== */
+
+let pointerDown=false;
+let pointerId=null;
 
 renderer.domElement.addEventListener("pointerdown",event=>{
-  if(event.button!==undefined&&event.button!==0)return;
+ if(event.button!==undefined&&event.button!==0)return;
 
-  event.preventDefault();
-  updatePointer(event);
-  pointerDown=true;
-  activePointerId=event.pointerId;
+ updatePointer(event);
+ pointerDown=true;
+ pointerId=event.pointerId;
 
-  const hit=getHitTarget();
-  useTool(hit);
+ const hit=getHit();
+ useTool(hit);
 
-  try{
-    renderer.domElement.setPointerCapture(event.pointerId);
-  }catch(e){}
+ try{renderer.domElement.setPointerCapture(event.pointerId)}catch(e){}
 });
 
 renderer.domElement.addEventListener("pointermove",event=>{
-  updatePointer(event);
-  if(grabbedBody){
-    event.preventDefault();
-    moveGrabbed();
-  }
+ updatePointer(event);
+ if(grabbedBody)moveGrabbed();
 });
 
 function finishPointer(event){
-  if(!pointerDown)return;
-  pointerDown=false;
+ if(!pointerDown)return;
+ pointerDown=false;
 
-  if(grabbedBody)endGrab();
+ if(grabbedBody)endGrab();
 
-  if(activePointerId!==null){
-    try{
-      renderer.domElement.releasePointerCapture(activePointerId);
-    }catch(e){}
-  }
-  activePointerId=null;
+ if(pointerId!==null){
+  try{renderer.domElement.releasePointerCapture(pointerId)}catch(e){}
+ }
+ pointerId=null;
 }
 
 renderer.domElement.addEventListener("pointerup",finishPointer);
 renderer.domElement.addEventListener("pointercancel",finishPointer);
 window.addEventListener("blur",()=>{
-  if(grabbedBody)endGrab();
+ if(grabbedBody)endGrab();
 });
 
-/* =========================================================
-   TOOLBAR
-========================================================= */
+/* =====================================================
+   TOOL BUTTONS
+===================================================== */
 
 document.querySelectorAll(".tool").forEach(button=>{
-  button.addEventListener("click",()=>{
-    if(grabbedBody)endGrab();
-
-    currentTool=button.dataset.tool;
-
-    document.querySelectorAll(".tool").forEach(b=>{
-      b.classList.toggle("active",b===button);
-    });
-
-    const labels={
-      grab:"オブジェクトをつかんで移動",
-      pulse:"クリックした場所に強力パルス",
-      detach:"エイリアンのパーツを選択して分離",
-      scan:"対象の物理情報をスキャン",
-      throw:"選択した物体を前方へ投げる"
-    };
-
-    hintEl.textContent=labels[currentTool];
-    setStatus("TOOL: "+currentTool.toUpperCase());
-  });
-});
-
-/* =========================================================
-   BUTTONS
-========================================================= */
-
-document.getElementById("soundButton").addEventListener("click",()=>{
-  if(!soundEnabled){
-    enableSound();
-  }else{
-    soundEnabled=false;
-    document.getElementById("soundButton").textContent="🔇 サウンド OFF";
-  }
-});
-
-document.getElementById("newAlien").addEventListener("click",()=>{
-  createAlien();
-});
-
-document.getElementById("addBox").addEventListener("click",()=>{
-  addBox();
-});
-
-document.getElementById("addBall").addEventListener("click",()=>{
-  addBall();
-});
-
-document.getElementById("gravityButton").addEventListener("click",()=>{
-  gravityEnabled=!gravityEnabled;
-  world.gravity.set(0,gravityEnabled?-9.82:0,0);
-
-  document.getElementById("gravityButton").textContent=
-    "重力："+(gravityEnabled?"ON":"OFF");
-
-  setStatus("GRAVITY: "+(gravityEnabled?"ON":"OFF"));
-});
-
-function clearPhysicsObjects(){
-  for(const item of physicsObjects){
-    world.removeBody(item.body);
-    scene.remove(item.mesh);
-    item.mesh.geometry.dispose();
-    if(item.mesh.material)item.mesh.material.dispose();
-  }
-  physicsObjects=[];
-}
-
-document.getElementById("resetButton").addEventListener("click",()=>{
+ button.addEventListener("click",()=>{
   if(grabbedBody)endGrab();
 
-  clearPhysicsObjects();
-  createAlien();
+  currentTool=button.dataset.tool;
 
-  gravityEnabled=true;
-  world.gravity.set(0,-9.82,0);
-  document.getElementById("gravityButton").textContent="重力：ON";
+  document.querySelectorAll(".tool").forEach(b=>{
+   b.classList.toggle("active",b===button);
+  });
 
-  camera.position.set(10,8,13);
-  controls.target.set(0,2,0);
-  controls.update();
+  const labels={
+   grab:"対象をドラッグして移動",
+   pulse:"対象をタップして強力パルス",
+   detach:"エイリアンのパーツをタップして分離",
+   scan:"対象をタップしてスキャン",
+   throw:"対象をタップして投げる"
+  };
 
-  hintEl.textContent="ステージをリセットしました";
-  setStatus("SYSTEM RESET");
+  hintEl.textContent=labels[currentTool];
+  statusEl.textContent="TOOL: "+currentTool.toUpperCase();
+ });
 });
 
-/* =========================================================
-   COLLISION SOUND
-========================================================= */
+/* =====================================================
+   BUTTONS
+===================================================== */
 
-world.addEventListener("beginContact",event=>{
-  const now=performance.now();
-  if(now-lastImpactSound<130)return;
-  lastImpactSound=now;
+document.getElementById("newAlien").onclick=()=>{
+ createAlien();
+};
 
-  const bodyA=event.bodyA;
-  const bodyB=event.bodyB;
+document.getElementById("addBox").onclick=()=>{
+ const item=createObject(
+  "METAL CRATE",
+  new THREE.Vector3(
+   (Math.random()-.5)*5,5,(Math.random()-.5)*5
+  ),
+  new THREE.Vector3(1,1,1),
+  "box",0x718b9a,3
+ );
+ playSound("pickup");
+};
 
-  const speedA=bodyA.velocity?bodyA.velocity.length():0;
-  const speedB=bodyB.velocity?bodyB.velocity.length():0;
+document.getElementById("addBall").onclick=()=>{
+ createObject(
+  "METAL SPHERE",
+  new THREE.Vector3(
+   (Math.random()-.5)*5,5,(Math.random()-.5)*5
+  ),
+  new THREE.Vector3(.5,.5,.5),
+  "sphere",0xa8c1ce,5
+ );
+ playSound("pickup");
+};
 
-  if(Math.max(speedA,speedB)>3){
-    playSound("impact");
-  }
-});
+document.getElementById("gravity").onclick=()=>{
+ gravityEnabled=!gravityEnabled;
+ world.gravity.set(0,gravityEnabled?-9.82:0,0);
+ document.getElementById("gravity").textContent=
+  "重力："+(gravityEnabled?"ON":"OFF");
+};
 
-/* =========================================================
-   EFFECT UPDATES
-========================================================= */
-
-function updateEffects(delta){
-  for(let i=pulseEffects.length-1;i>=0;i--){
-    const effect=pulseEffects[i];
-    effect.age+=delta;
-
-    const t=Math.min(effect.age/effect.duration,1);
-
-    if(effect.light){
-      effect.mesh.intensity=30*(1-t);
-    }else{
-      const scale=1+t*13;
-      effect.mesh.scale.setScalar(scale);
-      effect.mesh.material.opacity=1-t;
-    }
-
-    if(t>=1){
-      scene.remove(effect.mesh);
-      if(effect.mesh.geometry)effect.mesh.geometry.dispose();
-      if(effect.mesh.material)effect.mesh.material.dispose();
-      pulseEffects.splice(i,1);
-    }
-  }
-
-  for(let i=scanEffects.length-1;i>=0;i--){
-    const effect=scanEffects[i];
-    effect.age+=delta;
-
-    const t=Math.min(effect.age/.8,1);
-    effect.mesh.scale.setScalar(1+t*2.5);
-    effect.mesh.material.opacity=1-t;
-
-    if(t>=1){
-      scene.remove(effect.mesh);
-      effect.mesh.geometry.dispose();
-      effect.mesh.material.dispose();
-      scanEffects.splice(i,1);
-    }
-  }
+function clearObjects(){
+ for(const item of physicsObjects){
+  world.removeBody(item.body);
+  scene.remove(item.mesh);
+  item.mesh.geometry.dispose();
+  item.mesh.material.dispose();
+ }
+ physicsObjects.length=0;
 }
 
-/* =========================================================
-   PHYSICS -> THREE SYNC
-========================================================= */
+document.getElementById("reset").onclick=()=>{
+ if(grabbedBody)endGrab();
+ clearObjects();
+ createAlien();
+ gravityEnabled=true;
+ world.gravity.set(0,-9.82,0);
+ document.getElementById("gravity").textContent="重力：ON";
+ camera.position.set(12,8,16);
+ controls.target.set(0,2.5,0);
+ controls.update();
+};
+
+document.getElementById("sound").onclick=()=>{
+ if(!soundEnabled)enableSound();
+};
+
+/* =====================================================
+   COLLISION AUDIO
+===================================================== */
+
+world.addEventListener("beginContact",()=>{
+ const now=performance.now();
+ if(now-lastImpact<160)return;
+ lastImpact=now;
+ playSound("impact");
+});
+
+/* =====================================================
+   SYNC
+===================================================== */
 
 function syncPhysics(){
-  for(const part of alienParts){
-    part.mesh.position.set(
-      part.body.position.x,
-      part.body.position.y,
-      part.body.position.z
-    );
-    part.mesh.quaternion.set(
-      part.body.quaternion.x,
-      part.body.quaternion.y,
-      part.body.quaternion.z,
-      part.body.quaternion.w
-    );
-  }
+ for(const part of alienParts){
+  part.mesh.position.set(
+   part.body.position.x,
+   part.body.position.y,
+   part.body.position.z
+  );
+  part.mesh.quaternion.set(
+   part.body.quaternion.x,
+   part.body.quaternion.y,
+   part.body.quaternion.z,
+   part.body.quaternion.w
+  );
+ }
 
-  for(const item of physicsObjects){
-    item.mesh.position.set(
-      item.body.position.x,
-      item.body.position.y,
-      item.body.position.z
-    );
-    item.mesh.quaternion.set(
-      item.body.quaternion.x,
-      item.body.quaternion.y,
-      item.body.quaternion.z,
-      item.body.quaternion.w
-    );
-  }
+ for(const item of physicsObjects){
+  item.mesh.position.set(
+   item.body.position.x,
+   item.body.position.y,
+   item.body.position.z
+  );
+  item.mesh.quaternion.set(
+   item.body.quaternion.x,
+   item.body.quaternion.y,
+   item.body.quaternion.z,
+   item.body.quaternion.w
+  );
+ }
 }
 
-/* =========================================================
+/* =====================================================
+   EFFECTS
+===================================================== */
+
+function updateEffects(dt){
+ for(let i=pulseEffects.length-1;i>=0;i--){
+  const e=pulseEffects[i];
+  e.age+=dt;
+  const t=Math.min(e.age/e.duration,1);
+
+  if(e.light){
+   e.mesh.intensity=35*(1-t);
+  }else{
+   e.mesh.scale.setScalar(1+t*16);
+   e.mesh.material.opacity=1-t;
+  }
+
+  if(t>=1){
+   scene.remove(e.mesh);
+   if(e.mesh.geometry)e.mesh.geometry.dispose();
+   if(e.mesh.material)e.mesh.material.dispose();
+   pulseEffects.splice(i,1);
+  }
+ }
+
+ for(let i=scanEffects.length-1;i>=0;i--){
+  const e=scanEffects[i];
+  e.age+=dt;
+  const t=Math.min(e.age/.8,1);
+  e.mesh.scale.setScalar(1+t*3);
+  e.mesh.material.opacity=1-t;
+
+  if(t>=1){
+   scene.remove(e.mesh);
+   e.mesh.geometry.dispose();
+   e.mesh.material.dispose();
+   scanEffects.splice(i,1);
+  }
+ }
+}
+
+/* =====================================================
+   SPEED LIMIT
+===================================================== */
+
+function limitSpeed(body){
+ const speed=body.velocity.length();
+ if(speed>35){
+  body.velocity.scale(35/speed,body.velocity);
+ }
+}
+
+/* =====================================================
    RESIZE
-========================================================= */
+===================================================== */
 
 window.addEventListener("resize",()=>{
-  camera.aspect=window.innerWidth/window.innerHeight;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize(window.innerWidth,window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+ camera.aspect=innerWidth/innerHeight;
+ camera.updateProjectionMatrix();
+ renderer.setSize(innerWidth,innerHeight);
+ renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 });
 
-/* =========================================================
-   START GAME
-========================================================= */
+/* =====================================================
+   START
+===================================================== */
 
+buildLaboratory();
 createAlien();
 
 let accumulator=0;
-const fixedTimeStep=1/60;
+const STEP=1/60;
 
 function animate(){
-  requestAnimationFrame(animate);
+ requestAnimationFrame(animate);
 
-  const delta=Math.min(clock.getDelta(),.05);
+ const dt=Math.min(clock.getDelta(),.04);
+ accumulator+=dt;
 
-  if(!grabbedBody){
-    accumulator+=delta;
-    while(accumulator>=fixedTimeStep){
-      world.step(fixedTimeStep);
-      accumulator-=fixedTimeStep;
-    }
-  }else{
-    world.step(fixedTimeStep);
-  }
+ while(accumulator>=STEP){
+  world.step(STEP);
 
-  syncPhysics();
-  updateEffects(delta);
-  controls.update();
+  for(const p of alienParts)limitSpeed(p.body);
+  for(const p of physicsObjects)limitSpeed(p.body);
 
-  renderer.render(scene,camera);
+  accumulator-=STEP;
+ }
+
+ syncPhysics();
+ updateEffects(dt);
+ controls.update();
+ renderer.render(scene,camera);
 }
 
 animate();
 
-setStatus("SYSTEM ONLINE");
-hintEl.textContent="オブジェクトを選択して操作しよう";
+statusEl.textContent="SYSTEM ONLINE";
+hintEl.textContent="ツールを選択してエイリアンを操作しよう";
 
 </script>
 </body>
